@@ -25,7 +25,7 @@ Added "plugin actions":
 5. Collect compiled class files into a `myplugin.jar`
 6. Copy the following files in an installed instance of Freemind, assuming `C:\Program Files (x86)\FreeMind\`
     1. `C:\Program Files (x86)\FreeMind\myplugin\myplugin.jar`
-    2. `C:\Program Files (x86)\FreeMind\myplugin\MyPlugin.xml`
+    2. `C:\Program Files (x86)\FreeMind\MyPlugin.xml`
 
 ## TODO
 
