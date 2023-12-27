@@ -1,0 +1,10 @@
+[2023-05-04]
+    Modified freemind.main.FreeMind to restore the default security manager so
+    that security policies, if enabled at JVM start, are enforced.
+    
+[2023-12-27]
+    Modified freemind.view.mindmapview.MapView to disable "scrolling to 
+    selected node" on mouse click over a blank area in the mind map.
+    This avoids the unexpected jumpiness when navigating in a map.
+
+#EOF
