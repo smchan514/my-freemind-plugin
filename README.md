@@ -15,7 +15,7 @@ Added "plugin actions":
 ## How to compile and deploy manually
 
 1. Download Freemind binaries (version 1.0.0 used)
-2. Create Eclipse (version : 2020-09 (4.17.0) used)
+2. Run Eclipse (version : 2020-09 (4.17.0) used)
 3. Create Java project using JavaSE-1.8
 4. Add referenced libraries:
     1. `freemind.jar`
