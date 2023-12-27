@@ -795,7 +795,7 @@ public class MapView extends JPanel implements Printable, Autoscroll {
 			((NodeView) newSelected.getParent()).setPreferredChild(newSelected);
 		}
 
-		scrollNodeToVisible(newSelected);
+        // scrollNodeToVisible(newSelected); // [2023-12-27 SMC] Avoid jumpiness on single click...
 		newSelected.repaintSelected();
 
 		for (ListIterator e = oldSelecteds.listIterator(); e.hasNext();) {
