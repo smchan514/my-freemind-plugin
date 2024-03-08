@@ -21,8 +21,7 @@ import freemind.main.Tools;
 import freemind.modes.MindIcon;
 import freemind.modes.MindMapNode;
 
-public class MindMapNodeCellRenderer extends DefaultListCellRenderer
-{
+public class MindMapNodeCellRenderer extends DefaultListCellRenderer {
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger
             .getLogger(MindMapNodeCellRenderer.class.getName());
 
@@ -40,19 +39,16 @@ public class MindMapNodeCellRenderer extends DefaultListCellRenderer
 
     private CompositeIcon _compIcon = new CompositeIcon();
 
-    public MindMapNodeCellRenderer()
-    {
+    public MindMapNodeCellRenderer() {
         _iconLink = getImageIcon("/images/Link.png");
         _iconLinkLocal = getImageIcon("/images/LinkLocal.png");
         _iconMail = getImageIcon("/images/Mail.png");
         _iconExec = getImageIcon("/images/Executable.png");
     }
 
-    private ImageIcon getImageIcon(String resName)
-    {
+    private ImageIcon getImageIcon(String resName) {
         URL url = getClass().getResource(resName);
-        if (url == null)
-        {
+        if (url == null) {
             LOGGER.warning("Failed to find resource: " + resName);
             return new ImageIcon();
         }
@@ -62,12 +58,10 @@ public class MindMapNodeCellRenderer extends DefaultListCellRenderer
 
     @Override
     public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-            boolean cellHasFocus)
-    {
+            boolean cellHasFocus) {
         Component comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-        if (comp instanceof JLabel && value instanceof MindMapNode)
-        {
+        if (comp instanceof JLabel && value instanceof MindMapNode) {
             MindMapNode node = (MindMapNode) value;
             JLabel label = (JLabel) comp;
 
@@ -81,19 +75,13 @@ public class MindMapNodeCellRenderer extends DefaultListCellRenderer
             label.setIcon(_compIcon);
 
             String link = node.getLink();
-            if (link != null)
-            {
+            if (link != null) {
                 ImageIcon icon = _iconLink;
-                if (link.startsWith("#"))
-                {
+                if (link.startsWith("#")) {
                     icon = _iconLinkLocal;
-                }
-                else if (link.startsWith("mailto:"))
-                {
+                } else if (link.startsWith("mailto:")) {
                     icon = _iconMail;
-                }
-                else if (Tools.executableByExtension(link))
-                {
+                } else if (Tools.executableByExtension(link)) {
                     icon = _iconExec;
                 }
                 _compIcon.addImageIcon(icon);
@@ -101,8 +89,7 @@ public class MindMapNodeCellRenderer extends DefaultListCellRenderer
 
             // Check if the label exceeds certain dimensions
             Dimension prefSize = label.getPreferredSize();
-            if (prefSize.getHeight() > MAX_HEIGHT)
-            {
+            if (prefSize.getHeight() > MAX_HEIGHT) {
                 BufferedImage image = renderLabel(label, prefSize);
                 label.setText(null);
                 label.setIcon(new ImageIcon(image));
@@ -112,8 +99,7 @@ public class MindMapNodeCellRenderer extends DefaultListCellRenderer
         return comp;
     }
 
-    private BufferedImage renderLabel(JLabel label, Dimension prefSize)
-    {
+    private BufferedImage renderLabel(JLabel label, Dimension prefSize) {
         int imageWidth = Math.min(prefSize.width, MAX_WIDTH);
         int imageHeight = Math.min(prefSize.height, MAX_HEIGHT);
         BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
@@ -135,38 +121,30 @@ public class MindMapNodeCellRenderer extends DefaultListCellRenderer
     }
 
     //////////////////
-    private class CompositeIcon implements Icon
-    {
+    private class CompositeIcon implements Icon {
         private final LinkedList<ImageIcon> _lstIcons = new LinkedList<>();
 
-        public CompositeIcon()
-        {
+        public CompositeIcon() {
             // ...
         }
 
-        public void addImageIcon(ImageIcon icon)
-        {
+        public void addImageIcon(ImageIcon icon) {
             _lstIcons.add(icon);
         }
 
-        public void setIcons(List<?> icons)
-        {
+        public void setIcons(List<?> icons) {
             _lstIcons.clear();
 
-            for (Object object : icons)
-            {
-                if (object instanceof MindIcon)
-                {
+            for (Object object : icons) {
+                if (object instanceof MindIcon) {
                     _lstIcons.add(((MindIcon) object).getIcon());
                 }
             }
         }
 
         @Override
-        public void paintIcon(Component c, Graphics g, int x, int y)
-        {
-            for (ImageIcon icon : _lstIcons)
-            {
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            for (ImageIcon icon : _lstIcons) {
                 Image img = icon.getImage();
                 g.drawImage(img, x, y, null);
 
@@ -175,12 +153,10 @@ public class MindMapNodeCellRenderer extends DefaultListCellRenderer
         }
 
         @Override
-        public int getIconWidth()
-        {
+        public int getIconWidth() {
             int value = 0;
 
-            for (ImageIcon icon : _lstIcons)
-            {
+            for (ImageIcon icon : _lstIcons) {
                 value += icon.getIconWidth();
             }
 
@@ -188,12 +164,10 @@ public class MindMapNodeCellRenderer extends DefaultListCellRenderer
         }
 
         @Override
-        public int getIconHeight()
-        {
+        public int getIconHeight() {
             int value = 0;
 
-            for (ImageIcon icon : _lstIcons)
-            {
+            for (ImageIcon icon : _lstIcons) {
                 value = Math.max(value, icon.getIconHeight());
             }
 

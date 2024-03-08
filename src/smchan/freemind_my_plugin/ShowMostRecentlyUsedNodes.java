@@ -22,22 +22,18 @@ import freemind.view.mindmapview.NodeView;
 /**
  * Open the current mindmap in Windows Explorer
  */
-public class ShowMostRecentlyUsedNodes extends ModeControllerHookAdapter
-{
+public class ShowMostRecentlyUsedNodes extends ModeControllerHookAdapter {
     private TextFrame _textFrame;
 
-    public ShowMostRecentlyUsedNodes()
-    {
+    public ShowMostRecentlyUsedNodes() {
         // ...
     }
 
     @Override
-    public void startupMapHook()
-    {
+    public void startupMapHook() {
         super.startupMapHook();
 
-        if (_textFrame == null)
-        {
+        if (_textFrame == null) {
             _textFrame = new TextFrame();
         }
 
@@ -49,25 +45,21 @@ public class ShowMostRecentlyUsedNodes extends ModeControllerHookAdapter
     }
 
     @Override
-    public void shutdownMapHook()
-    {
+    public void shutdownMapHook() {
         // ...
     }
 
     ////////////////////
     private class TextFrame extends JFrame
-            implements TreeModelListener, NodeSelectionListener, NodeLifetimeListener, MapModuleChangeObserver
-    {
+            implements TreeModelListener, NodeSelectionListener, NodeLifetimeListener, MapModuleChangeObserver {
         private static final long serialVersionUID = 1L;
         private JTextArea _textArea;
 
-        public TextFrame()
-        {
+        public TextFrame() {
             initComponents();
         }
 
-        private void initComponents()
-        {
+        private void initComponents() {
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
             getContentPane().add(createMainPanel(), BorderLayout.CENTER);
@@ -77,8 +69,7 @@ public class ShowMostRecentlyUsedNodes extends ModeControllerHookAdapter
             setVisible(true);
         }
 
-        private Component createMainPanel()
-        {
+        private Component createMainPanel() {
             JPanel panel = new JPanel(new BorderLayout());
 
             _textArea = new JTextArea(5, 80);
@@ -88,15 +79,13 @@ public class ShowMostRecentlyUsedNodes extends ModeControllerHookAdapter
             return panel;
         }
 
-        private void appendText(String string)
-        {
+        private void appendText(String string) {
             _textArea.append(string);
             _textArea.append("\n");
         }
 
         @Override
-        public void treeNodesChanged(TreeModelEvent e)
-        {
+        public void treeNodesChanged(TreeModelEvent e) {
             StringBuilder sb = new StringBuilder();
             sb.append("treeNodesChanged:");
             sb.append(e.getTreePath());
@@ -110,8 +99,7 @@ public class ShowMostRecentlyUsedNodes extends ModeControllerHookAdapter
         }
 
         @Override
-        public void treeNodesInserted(TreeModelEvent e)
-        {
+        public void treeNodesInserted(TreeModelEvent e) {
             StringBuilder sb = new StringBuilder();
             sb.append("treeNodesInserted:");
             sb.append(e.getTreePath());
@@ -119,8 +107,7 @@ public class ShowMostRecentlyUsedNodes extends ModeControllerHookAdapter
         }
 
         @Override
-        public void treeNodesRemoved(TreeModelEvent e)
-        {
+        public void treeNodesRemoved(TreeModelEvent e) {
             StringBuilder sb = new StringBuilder();
             sb.append("treeNodesRemoved:");
             sb.append(e.getTreePath());
@@ -128,8 +115,7 @@ public class ShowMostRecentlyUsedNodes extends ModeControllerHookAdapter
         }
 
         @Override
-        public void treeStructureChanged(TreeModelEvent e)
-        {
+        public void treeStructureChanged(TreeModelEvent e) {
             StringBuilder sb = new StringBuilder();
             sb.append("treeStructureChanged:");
             sb.append(e.getTreePath());
@@ -137,8 +123,7 @@ public class ShowMostRecentlyUsedNodes extends ModeControllerHookAdapter
         }
 
         @Override
-        public void onUpdateNodeHook(MindMapNode node)
-        {
+        public void onUpdateNodeHook(MindMapNode node) {
             StringBuilder sb = new StringBuilder();
             sb.append("onUpdateNodeHook:");
             sb.append(node);
@@ -148,8 +133,7 @@ public class ShowMostRecentlyUsedNodes extends ModeControllerHookAdapter
         }
 
         @Override
-        public void onFocusNode(NodeView node)
-        {
+        public void onFocusNode(NodeView node) {
             StringBuilder sb = new StringBuilder();
             sb.append("onFocusNode:");
             sb.append(node.getModel().getPlainTextContent());
@@ -159,28 +143,23 @@ public class ShowMostRecentlyUsedNodes extends ModeControllerHookAdapter
         }
 
         @Override
-        public void onLostFocusNode(NodeView node)
-        {
+        public void onLostFocusNode(NodeView node) {
         }
 
         @Override
-        public void onSaveNode(MindMapNode node)
-        {
+        public void onSaveNode(MindMapNode node) {
         }
 
         @Override
-        public void onSelectionChange(NodeView node, boolean isSelected)
-        {
+        public void onSelectionChange(NodeView node, boolean isSelected) {
         }
 
         @Override
-        public void onCreateNodeHook(MindMapNode node)
-        {
+        public void onCreateNodeHook(MindMapNode node) {
         }
 
         @Override
-        public void onPreDeleteNode(MindMapNode node)
-        {
+        public void onPreDeleteNode(MindMapNode node) {
             StringBuilder sb = new StringBuilder();
             sb.append("onPreDeleteNode:");
             sb.append(node);
@@ -190,14 +169,12 @@ public class ShowMostRecentlyUsedNodes extends ModeControllerHookAdapter
         }
 
         @Override
-        public void onPostDeleteNode(MindMapNode node, MindMapNode parent)
-        {
+        public void onPostDeleteNode(MindMapNode node, MindMapNode parent) {
         }
 
         @Override
         public boolean isMapModuleChangeAllowed(MapModule oldMapModule, Mode oldMode, MapModule newMapModule,
-                Mode newMode)
-        {
+                Mode newMode) {
             StringBuilder sb = new StringBuilder();
             sb.append("isMapModuleChangeAllowed: oldMapModule=");
             sb.append(oldMapModule);
@@ -213,15 +190,13 @@ public class ShowMostRecentlyUsedNodes extends ModeControllerHookAdapter
         }
 
         @Override
-        public void beforeMapModuleChange(MapModule oldMapModule, Mode oldMode, MapModule newMapModule, Mode newMode)
-        {
+        public void beforeMapModuleChange(MapModule oldMapModule, Mode oldMode, MapModule newMapModule, Mode newMode) {
             // TODO Auto-generated method stub
 
         }
 
         @Override
-        public void afterMapClose(MapModule oldMapModule, Mode oldMode)
-        {
+        public void afterMapClose(MapModule oldMapModule, Mode oldMode) {
             StringBuilder sb = new StringBuilder();
             sb.append("afterMapClose:");
             sb.append(oldMapModule);
@@ -232,8 +207,7 @@ public class ShowMostRecentlyUsedNodes extends ModeControllerHookAdapter
         }
 
         @Override
-        public void afterMapModuleChange(MapModule oldMapModule, Mode oldMode, MapModule newMapModule, Mode newMode)
-        {
+        public void afterMapModuleChange(MapModule oldMapModule, Mode oldMode, MapModule newMapModule, Mode newMode) {
             StringBuilder sb = new StringBuilder();
             sb.append("afterMapModuleChange: oldMapModule=");
             sb.append(oldMapModule);
@@ -248,8 +222,7 @@ public class ShowMostRecentlyUsedNodes extends ModeControllerHookAdapter
         }
 
         @Override
-        public void numberOfOpenMapInformation(int number, int pIndex)
-        {
+        public void numberOfOpenMapInformation(int number, int pIndex) {
             StringBuilder sb = new StringBuilder();
             sb.append("numberOfOpenMapInformation: number=");
             sb.append(number);

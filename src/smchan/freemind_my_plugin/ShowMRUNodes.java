@@ -11,8 +11,7 @@ import smchan.freemind_my_plugin.mru.MRUNodesView;
 /**
  * Show the most recently used mindmap nodes.
  */
-public class ShowMRUNodes extends ModeControllerHookAdapter
-{
+public class ShowMRUNodes extends ModeControllerHookAdapter {
     private static final int DEFAULT_NBR_MRU_ELEMENTS = 25;
 
     // Shared global instances of MRU nodes model and view
@@ -20,23 +19,19 @@ public class ShowMRUNodes extends ModeControllerHookAdapter
     private static MRUNodesView _mruView;
     private static MRUNodesModel _mruModel;
 
-    public ShowMRUNodes()
-    {
+    public ShowMRUNodes() {
         // ...
     }
 
     @Override
-    public void startupMapHook()
-    {
+    public void startupMapHook() {
         super.startupMapHook();
 
-        if (!_initialized)
-        {
+        if (!_initialized) {
             performInit();
         }
 
-        if (_mruView == null || !_mruView.isVisible())
-        {
+        if (_mruView == null || !_mruView.isVisible()) {
             JFrame owner = getController().getFrame().getJFrame();
             _mruView = new MRUNodesView(owner);
             _mruView.setMRUNodesModel(_mruModel);
@@ -51,9 +46,7 @@ public class ShowMRUNodes extends ModeControllerHookAdapter
             _mruView.setLocation(pt);
 
             _mruView.setVisible(true);
-        }
-        else
-        {
+        } else {
             _mruView.requestFocus();
         }
     }
@@ -61,8 +54,7 @@ public class ShowMRUNodes extends ModeControllerHookAdapter
     /**
      * Perform initialization of this action
      */
-    private void performInit()
-    {
+    private void performInit() {
         int nbrMruElements = DEFAULT_NBR_MRU_ELEMENTS;
         String str;
 

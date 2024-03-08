@@ -9,28 +9,23 @@ import freemind.extensions.ExportHook;
 /**
  * Open the current mindmap in Windows Explorer
  */
-public class OpenMindMapInExplorer extends ExportHook
-{
-    public OpenMindMapInExplorer()
-    {
+public class OpenMindMapInExplorer extends ExportHook {
+    public OpenMindMapInExplorer() {
         // ...
     }
 
     @Override
-    public void startupMapHook()
-    {
+    public void startupMapHook() {
         super.startupMapHook();
 
         File file = getController().getMap().getFile();
-        if (file == null)
-        {
+        if (file == null) {
             JOptionPane.showMessageDialog(null, "Unable to get mindmap file name (probably not saved yet?)", "Error",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        try
-        {
+        try {
             // Start an 'explorer' process
             // See http://support.microsoft.com/kb/152457
             String cmd = "explorer /select," + file;
@@ -38,9 +33,7 @@ public class OpenMindMapInExplorer extends ExportHook
 
             // Not sure if we need to wait for explorer to return...
             // proc.waitFor();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Failed to open explorer " + e.getMessage(), "Error",
                     JOptionPane.WARNING_MESSAGE);
         }

@@ -21,106 +21,99 @@ import freemind.modes.mindmapmode.actions.xml.ActionPair;
  *   - Added support for undo
  * </PRE>
  */
-public class InsertDateStamp extends ExportHook
-{
-	private boolean _initialized = false;
-	private SimpleDateFormat _sdf;
+public class InsertDateStamp extends ExportHook {
+    private boolean _initialized = false;
+    private SimpleDateFormat _sdf;
 
     /**
-	 * Timestamp insertion format with the following positional arguments
-	 * 
-	 * <PRE>
-	 *   - {0}: Existing text
-	 *   - {1}: Timestamp
-	 * </PRE>
-	 */
-	private String _insertFormat;
-	
-	/**
-	 * Simple date format
-	 */
-	private String _dateFormat = "'['yyyy-MM-dd']'";
+     * Timestamp insertion format with the following positional arguments
+     * 
+     * <PRE>
+     *   - {0}: Existing text
+     *   - {1}: Timestamp
+     * </PRE>
+     */
+    private String _insertFormat;
 
-	public InsertDateStamp()
-	{
-		// Use default format and time zone
-		_sdf = new SimpleDateFormat(_dateFormat);
-		_insertFormat = "{1} {0}";
-	}
+    /**
+     * Simple date format
+     */
+    private String _dateFormat = "'['yyyy-MM-dd']'";
 
-	@Override
-    public void startupMapHook()
-	{
-		super.startupMapHook();
+    public InsertDateStamp() {
+        // Use default format and time zone
+        _sdf = new SimpleDateFormat(_dateFormat);
+        _insertFormat = "{1} {0}";
+    }
 
-		// Lazy init of this action
-		if (!_initialized)
-			performInit();
+    @Override
+    public void startupMapHook() {
+        super.startupMapHook();
 
-		// Skip the rest unless there is only one node selected
-		List<?> list = getController().getSelecteds();
-		if (list.size() != 1)
-			return;
+        // Lazy init of this action
+        if (!_initialized)
+            performInit();
 
-		MindMapNode selectedNode = (MindMapNode) list.get(0);
+        // Skip the rest unless there is only one node selected
+        List<?> list = getController().getSelecteds();
+        if (list.size() != 1)
+            return;
 
-		String oldText = selectedNode.getText();
-		String newText = selectedNode.getText();
-		String timestamp = _sdf.format(new Date());
+        MindMapNode selectedNode = (MindMapNode) list.get(0);
 
-		// Get current text in the node
-		if (newText.isEmpty())
-		{
-			// No current text, put the timestamp as-is
-			newText = timestamp;
-		}
-		else
-		{
-			// Insert timestamp into current text using _insertFormat
-			newText = MessageFormat.format(_insertFormat, newText, timestamp);
-		}
+        String oldText = selectedNode.getText();
+        String newText = selectedNode.getText();
+        String timestamp = _sdf.format(new Date());
 
-		// Assign new text to the selected node with support for undo
-		// using the existing "transaction" facility via MindMapController.
-		// EditNodeAction is generated from XSD and is processed by
-		// Freemind infrastructure.
-		MindMapController mmc = (MindMapController) getController();
+        // Get current text in the node
+        if (newText.isEmpty()) {
+            // No current text, put the timestamp as-is
+            newText = timestamp;
+        } else {
+            // Insert timestamp into current text using _insertFormat
+            newText = MessageFormat.format(_insertFormat, newText, timestamp);
+        }
 
-		// Forward action
-		EditNodeAction editAction = new EditNodeAction();
-		editAction.setNode(mmc.getNodeID(selectedNode));
-		editAction.setText(newText);
+        // Assign new text to the selected node with support for undo
+        // using the existing "transaction" facility via MindMapController.
+        // EditNodeAction is generated from XSD and is processed by
+        // Freemind infrastructure.
+        MindMapController mmc = (MindMapController) getController();
 
-		// Undo action
-		EditNodeAction undoEditAction = new EditNodeAction();
-		undoEditAction.setNode(mmc.getNodeID(selectedNode));
-		undoEditAction.setText(oldText);
+        // Forward action
+        EditNodeAction editAction = new EditNodeAction();
+        editAction.setNode(mmc.getNodeID(selectedNode));
+        editAction.setText(newText);
 
-		// Perform the transaction
-		mmc.doTransaction(getName(), new ActionPair(editAction, undoEditAction));
-	}
+        // Undo action
+        EditNodeAction undoEditAction = new EditNodeAction();
+        undoEditAction.setNode(mmc.getNodeID(selectedNode));
+        undoEditAction.setText(oldText);
 
-	/**
-	 * Perform initialization of this action
-	 */
-	private void performInit()
-	{
-		String str;
+        // Perform the transaction
+        mmc.doTransaction(getName(), new ActionPair(editAction, undoEditAction));
+    }
 
-		if ((str = getResourceString("date_format")) != null) {
-			_dateFormat = str;
-			_sdf = new SimpleDateFormat(str);
-		}
+    /**
+     * Perform initialization of this action
+     */
+    private void performInit() {
+        String str;
 
-		if ((str = getResourceString("insert_format")) != null) {
-			_insertFormat = str;
-		}
+        if ((str = getResourceString("date_format")) != null) {
+            _dateFormat = str;
+            _sdf = new SimpleDateFormat(str);
+        }
 
-		if ((str = getResourceString("time_zone")) != null && !str.isEmpty()) {
-			TimeZone tz = TimeZone.getTimeZone(str);
-			_sdf.setTimeZone(tz);
-		}
+        if ((str = getResourceString("insert_format")) != null) {
+            _insertFormat = str;
+        }
 
-		_initialized = true;
-	}
+        if ((str = getResourceString("time_zone")) != null && !str.isEmpty()) {
+            TimeZone tz = TimeZone.getTimeZone(str);
+            _sdf.setTimeZone(tz);
+        }
+
+        _initialized = true;
+    }
 }

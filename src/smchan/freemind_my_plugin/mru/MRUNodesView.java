@@ -27,8 +27,7 @@ import freemind.modes.MindMapNode;
 /**
  * MRU nodes display.
  */
-public class MRUNodesView extends JDialog
-{
+public class MRUNodesView extends JDialog {
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger
             .getLogger(MRUNodesView.class.getName());
 
@@ -41,26 +40,22 @@ public class MRUNodesView extends JDialog
 
     private MRUNodesModel _mruModel;
 
-    public MRUNodesView(JFrame owner)
-    {
+    public MRUNodesView(JFrame owner) {
         super(owner);
 
         LOGGER.info("Creating MRUNodesView");
         initComponents();
     }
 
-    public void setMRUNodesModel(MRUNodesModel mruModel)
-    {
-        if (mruModel != null)
-        {
+    public void setMRUNodesModel(MRUNodesModel mruModel) {
+        if (mruModel != null) {
             _jlistMRUNodes.setModel(mruModel);
         }
 
         _mruModel = mruModel;
     }
 
-    private void initComponents()
-    {
+    private void initComponents() {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setTitle("MRU nodes");
         setMinimumSize(new Dimension(320, 240));
@@ -69,8 +64,7 @@ public class MRUNodesView extends JDialog
         getContentPane().add(createControlPanel(), BorderLayout.SOUTH);
     }
 
-    private Component createControlPanel()
-    {
+    private Component createControlPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc;
         JComponent comp;
@@ -86,8 +80,7 @@ public class MRUNodesView extends JDialog
         return panel;
     }
 
-    private Component createMainPanel()
-    {
+    private Component createMainPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
         _jlistMRUNodes = new JList<>();
@@ -104,22 +97,17 @@ public class MRUNodesView extends JDialog
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    private class MyMouseListener extends MouseAdapter
-    {
-        public MyMouseListener()
-        {
+    private class MyMouseListener extends MouseAdapter {
+        public MyMouseListener() {
             // ...
         }
 
         @Override
-        public void mouseClicked(MouseEvent evt)
-        {
+        public void mouseClicked(MouseEvent evt) {
             // Accept CTRL-click or double-click
-            if ((evt.getModifiers() & ALL_MODFIERS) == KeyEvent.CTRL_MASK || evt.getClickCount() == 2)
-            {
+            if ((evt.getModifiers() & ALL_MODFIERS) == KeyEvent.CTRL_MASK || evt.getClickCount() == 2) {
                 MindMapNode node = _jlistMRUNodes.getSelectedValue();
-                if (node != null)
-                {
+                if (node != null) {
                     _mruModel.selectNode(node);
                 }
                 evt.consume();
@@ -128,22 +116,17 @@ public class MRUNodesView extends JDialog
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    private class MyKeyListener extends KeyAdapter
-    {
+    private class MyKeyListener extends KeyAdapter {
 
-        public MyKeyListener()
-        {
+        public MyKeyListener() {
             // ...
         }
 
         @Override
-        public void keyPressed(KeyEvent evt)
-        {
-            if ((evt.getModifiers() & ALL_MODFIERS) == 0 && evt.getKeyCode() == KeyEvent.VK_ENTER)
-            {
+        public void keyPressed(KeyEvent evt) {
+            if ((evt.getModifiers() & ALL_MODFIERS) == 0 && evt.getKeyCode() == KeyEvent.VK_ENTER) {
                 MindMapNode node = _jlistMRUNodes.getSelectedValue();
-                if (node != null)
-                {
+                if (node != null) {
                     _mruModel.selectNode(node);
                 }
                 evt.consume();
@@ -152,18 +135,15 @@ public class MRUNodesView extends JDialog
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    private class ClearAction extends AbstractAction
-    {
+    private class ClearAction extends AbstractAction {
         private static final long serialVersionUID = 1L;
 
-        public ClearAction()
-        {
+        public ClearAction() {
             super("Clear");
         }
 
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
+        public void actionPerformed(ActionEvent e) {
             _mruModel.clear();
         }
 
