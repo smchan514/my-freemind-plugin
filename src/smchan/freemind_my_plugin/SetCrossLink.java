@@ -60,11 +60,15 @@ public class SetCrossLink extends ExportHook {
         // Assign new text to the selected node with support for undo
         // using the existing "transaction" facility via MindMapController.
         MindMapController mmc = (MindMapController) getController();
+        performTransaction(mmc, node1, node2);
+    }
+
+    public static void performTransaction(MindMapController mmc, MindMapNode node1, MindMapNode node2) {
         XmlAction editAction = createEditAction(mmc, node1, node2);
         XmlAction undoAction = createUndoAction(mmc, node1, node2);
 
         // Perform the transaction
-        mmc.doTransaction(getName(), new ActionPair(editAction, undoAction));
+        mmc.doTransaction("setLocalLinks", new ActionPair(editAction, undoAction));
     }
 
     /**
@@ -75,7 +79,7 @@ public class SetCrossLink extends ExportHook {
      * <LI>Set the link on node2 to node1
      * </OL>
      */
-    private XmlAction createEditAction(MindMapController mmc, MindMapNode node1, MindMapNode node2) {
+    private static XmlAction createEditAction(MindMapController mmc, MindMapNode node1, MindMapNode node2) {
         CompoundAction compoundAction = new CompoundAction();
         AddLinkXmlAction childAction = new AddLinkXmlAction();
         childAction.setNode(mmc.getNodeID(node1));
@@ -97,7 +101,7 @@ public class SetCrossLink extends ExportHook {
      * <LI>Set the link on node2 to its current value
      * </OL>
      */
-    private XmlAction createUndoAction(MindMapController mmc, MindMapNode node1, MindMapNode node2) {
+    private static XmlAction createUndoAction(MindMapController mmc, MindMapNode node1, MindMapNode node2) {
         CompoundAction compoundAction = new CompoundAction();
         AddLinkXmlAction childAction = new AddLinkXmlAction();
         childAction.setNode(mmc.getNodeID(node1));
@@ -111,7 +115,7 @@ public class SetCrossLink extends ExportHook {
         return compoundAction;
     }
 
-    private String getLocalLinkToNode(MindMapController mmc, MindMapNode node) {
+    private static String getLocalLinkToNode(MindMapController mmc, MindMapNode node) {
         return "#" + mmc.getNodeID(node);
     }
 }

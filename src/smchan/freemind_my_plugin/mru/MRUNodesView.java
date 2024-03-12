@@ -36,12 +36,12 @@ import freemind.modes.ModeController;
 import freemind.modes.mindmapmode.MindMapController;
 import freemind.modes.mindmapmode.actions.xml.ActionPair;
 import smchan.freemind_my_plugin.PutMindMapNameInClipboard;
+import smchan.freemind_my_plugin.SetCrossLink;
 
 /**
  * MRU nodes display.
  * 
- * [2024-03-11] Added pop-up menu on right-click with the menu option to "Set
- * remote cross link"
+ * [2024-03-12] Added pop-up menu on right-click with option to "Set cross link"
  */
 public class MRUNodesView extends JDialog {
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger
@@ -146,11 +146,6 @@ public class MRUNodesView extends JDialog {
         // Precondition 2: the two selected nodes are from different maps
         MindMapController mmc1 = (MindMapController) node1.getMap().getModeController();
         MindMapController mmc2 = (MindMapController) node2.getMap().getModeController();
-        if (mmc1 == mmc2) {
-            JOptionPane.showMessageDialog(null, "The two nodes are in the same map, use local cross link instead!",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
 
         // Warn for overwriting links
         if (node1.getLink() != null || node2.getLink() != null) {
@@ -163,22 +158,23 @@ public class MRUNodesView extends JDialog {
             }
         }
 
-        // Perform two transactions, one on each map
-        {
-            // Set node1 link to node2
-            XmlAction editAction = createEditAction(mmc1, node1, PutMindMapNameInClipboard.getFullPathToNode(node2));
-            XmlAction undoAction = createUndoAction(mmc1, node1);
-            mmc1.doTransaction("mmc1", new ActionPair(editAction, undoAction));
-            mmc1.showThisMap();
+        if (mmc1 == mmc2) {
+            // The two nodes are in the same mind map, set local cross links instead
+            SetCrossLink.performTransaction(mmc1, node1, node2);
+        } else {
+            // The nodes are in two separate mind maps, perform two transactions, one on
+            // each map
+            performTransaction(mmc1, node1, node2);
+            performTransaction(mmc2, node2, node1);
         }
+    }
 
-        {
-            // Set node2 link to node1
-            XmlAction editAction = createEditAction(mmc2, node2, PutMindMapNameInClipboard.getFullPathToNode(node1));
-            XmlAction undoAction = createUndoAction(mmc2, node2);
-            mmc2.doTransaction("mmc2", new ActionPair(editAction, undoAction));
-            mmc2.showThisMap();
-        }
+    private void performTransaction(MindMapController mmc, MindMapNode nodeSrc, MindMapNode nodeDst) {
+        XmlAction editAction = createEditAction(mmc, nodeSrc, PutMindMapNameInClipboard.getFullPathToNode(nodeDst));
+        XmlAction undoAction = createUndoAction(mmc, nodeSrc);
+        mmc.doTransaction("mmc1", new ActionPair(editAction, undoAction));
+        // Find a better way to trigger update of file change indicator...
+        // mmc.showThisMap();
     }
 
     /**
@@ -208,7 +204,7 @@ public class MRUNodesView extends JDialog {
         private static final long serialVersionUID = 1L;
 
         public SetRemoteCrossLinksAction() {
-            super("Set remote cross link");
+            super("Set cross link");
         }
 
         @Override
