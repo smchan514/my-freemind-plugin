@@ -6,11 +6,14 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -18,14 +21,27 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 
+import freemind.controller.actions.generated.instance.AddLinkXmlAction;
+import freemind.controller.actions.generated.instance.XmlAction;
 import freemind.modes.MindMapNode;
+import freemind.modes.ModeController;
+import freemind.modes.mindmapmode.MindMapController;
+import freemind.modes.mindmapmode.actions.xml.ActionPair;
+import smchan.freemind_my_plugin.PutMindMapNameInClipboard;
 
 /**
  * MRU nodes display.
+ * 
+ * [2024-03-11] Added pop-up menu on right-click with the menu option to "Set
+ * remote cross link"
  */
 public class MRUNodesView extends JDialog {
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger
@@ -33,8 +49,8 @@ public class MRUNodesView extends JDialog {
 
     private static final long serialVersionUID = 1L;
     private static final Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
-    private static final int ALL_MODFIERS = KeyEvent.SHIFT_MASK | KeyEvent.CTRL_MASK | KeyEvent.META_MASK
-            | KeyEvent.ALT_MASK;
+    private static final int ALL_MODFIERS = KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK | KeyEvent.META_DOWN_MASK
+            | KeyEvent.ALT_DOWN_MASK;
 
     private JList<MindMapNode> _jlistMRUNodes;
 
@@ -84,7 +100,7 @@ public class MRUNodesView extends JDialog {
         JPanel panel = new JPanel(new BorderLayout());
 
         _jlistMRUNodes = new JList<>();
-        _jlistMRUNodes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        _jlistMRUNodes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         _jlistMRUNodes.setCellRenderer(new MindMapNodeCellRenderer());
 
         // Listen for user inputs
@@ -96,6 +112,111 @@ public class MRUNodesView extends JDialog {
         return panel;
     }
 
+    void showNodeInList() {
+        MindMapNode node = _jlistMRUNodes.getSelectedValue();
+        if (node != null) {
+            // Show the corresponding mind map and scroll to the node
+            _mruModel.selectNode(node);
+        }
+    }
+
+    void showContextualMenu() {
+        // Create pop-up menu
+        JPopupMenu popupMenu = new JPopupMenu();
+        popupMenu.add(new JMenuItem(new SetRemoteCrossLinksAction()));
+
+        // Show pop-up menu at mouse cursor location
+        Point point = MouseInfo.getPointerInfo().getLocation();
+        SwingUtilities.convertPointFromScreen(point, this);
+        popupMenu.show(this, point.x, point.y);
+    }
+
+    void doSetRemoteCrossLinks() {
+        // Precondition 1: exactly two nodes selected in the list
+        List<MindMapNode> selected = _jlistMRUNodes.getSelectedValuesList();
+        if (selected.size() != 2) {
+            JOptionPane.showMessageDialog(null, "Preconditions not met: get two nodes selected", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        MindMapNode node1 = selected.get(0);
+        MindMapNode node2 = selected.get(1);
+
+        // Precondition 2: the two selected nodes are from different maps
+        MindMapController mmc1 = (MindMapController) node1.getMap().getModeController();
+        MindMapController mmc2 = (MindMapController) node2.getMap().getModeController();
+        if (mmc1 == mmc2) {
+            JOptionPane.showMessageDialog(null, "The two nodes are in the same map, use local cross link instead!",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Warn for overwriting links
+        if (node1.getLink() != null || node2.getLink() != null) {
+            int rc = JOptionPane.showConfirmDialog(null, "Overwrite existing link(s) in nodes?", "Confirm",
+                    JOptionPane.OK_CANCEL_OPTION);
+
+            if (rc != JOptionPane.OK_OPTION) {
+                // Cancel
+                return;
+            }
+        }
+
+        // Perform two transactions, one on each map
+        {
+            // Set node1 link to node2
+            XmlAction editAction = createEditAction(mmc1, node1, PutMindMapNameInClipboard.getFullPathToNode(node2));
+            XmlAction undoAction = createUndoAction(mmc1, node1);
+            mmc1.doTransaction("mmc1", new ActionPair(editAction, undoAction));
+            mmc1.showThisMap();
+        }
+
+        {
+            // Set node2 link to node1
+            XmlAction editAction = createEditAction(mmc2, node2, PutMindMapNameInClipboard.getFullPathToNode(node1));
+            XmlAction undoAction = createUndoAction(mmc2, node2);
+            mmc2.doTransaction("mmc2", new ActionPair(editAction, undoAction));
+            mmc2.showThisMap();
+        }
+    }
+
+    /**
+     * Create the action corresponding to the forward edit action which sets the
+     * node's link to newDestination
+     */
+    private XmlAction createEditAction(ModeController mmc, MindMapNode node, String newDestination) {
+        AddLinkXmlAction action = new AddLinkXmlAction();
+        action.setNode(mmc.getNodeID(node));
+        action.setDestination(newDestination);
+        return action;
+    }
+
+    /**
+     * Create the action corresponding to the undo action which reverts the node's
+     * link to its current value
+     */
+    private XmlAction createUndoAction(ModeController mmc, MindMapNode node) {
+        AddLinkXmlAction action = new AddLinkXmlAction();
+        action.setNode(mmc.getNodeID(node));
+        action.setDestination(node.getLink());
+        return action;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private class SetRemoteCrossLinksAction extends AbstractAction {
+        private static final long serialVersionUID = 1L;
+
+        public SetRemoteCrossLinksAction() {
+            super("Set remote cross link");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            doSetRemoteCrossLinks();
+        }
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private class MyMouseListener extends MouseAdapter {
         public MyMouseListener() {
@@ -104,13 +225,16 @@ public class MRUNodesView extends JDialog {
 
         @Override
         public void mouseClicked(MouseEvent evt) {
-            // Accept CTRL-click or double-click
-            if ((evt.getModifiers() & ALL_MODFIERS) == KeyEvent.CTRL_MASK || evt.getClickCount() == 2) {
-                MindMapNode node = _jlistMRUNodes.getSelectedValue();
-                if (node != null) {
-                    _mruModel.selectNode(node);
-                }
+            if (evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
+                // Double-click with mouse left button
+                showNodeInList();
                 evt.consume();
+            } else if (evt.getButton() == MouseEvent.BUTTON3 && evt.getClickCount() == 1) {
+                // Single-click with mouse right button
+                showContextualMenu();
+                evt.consume();
+            } else {
+                System.out.println(evt);
             }
         }
     }
@@ -124,11 +248,11 @@ public class MRUNodesView extends JDialog {
 
         @Override
         public void keyPressed(KeyEvent evt) {
-            if ((evt.getModifiers() & ALL_MODFIERS) == 0 && evt.getKeyCode() == KeyEvent.VK_ENTER) {
-                MindMapNode node = _jlistMRUNodes.getSelectedValue();
-                if (node != null) {
-                    _mruModel.selectNode(node);
-                }
+            if ((evt.getModifiersEx() & ALL_MODFIERS) == 0 && evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                showNodeInList();
+                evt.consume();
+            } else if ((evt.getModifiersEx() & ALL_MODFIERS) == 0 && evt.getKeyCode() == KeyEvent.VK_CONTEXT_MENU) {
+                showContextualMenu();
                 evt.consume();
             }
         }
