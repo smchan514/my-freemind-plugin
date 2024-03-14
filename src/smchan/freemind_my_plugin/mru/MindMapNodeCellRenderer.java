@@ -11,16 +11,21 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.border.Border;
 
 import freemind.main.Tools;
 import freemind.modes.MindIcon;
 import freemind.modes.MindMapNode;
 
+/**
+ * [2024-03-13] Show pinned nodes with a special border
+ */
 public class MindMapNodeCellRenderer extends DefaultListCellRenderer {
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger
             .getLogger(MindMapNodeCellRenderer.class.getName());
@@ -39,11 +44,15 @@ public class MindMapNodeCellRenderer extends DefaultListCellRenderer {
 
     private CompositeIcon _compIcon = new CompositeIcon();
 
+    private final Border _borderPinnedNode;
+
     public MindMapNodeCellRenderer() {
         _iconLink = getImageIcon("/images/Link.png");
         _iconLinkLocal = getImageIcon("/images/LinkLocal.png");
         _iconMail = getImageIcon("/images/Mail.png");
         _iconExec = getImageIcon("/images/Executable.png");
+
+        _borderPinnedNode = BorderFactory.createMatteBorder(0, 8, 0, 0, Color.GREEN);
     }
 
     private ImageIcon getImageIcon(String resName) {
@@ -64,6 +73,7 @@ public class MindMapNodeCellRenderer extends DefaultListCellRenderer {
         if (comp instanceof JLabel && value instanceof MindMapNode) {
             MindMapNode node = (MindMapNode) value;
             JLabel label = (JLabel) comp;
+            MRUNodesModel model = (MRUNodesModel) list.getModel();
 
             // Set text and font
             label.setText(node.getText());
@@ -94,6 +104,9 @@ public class MindMapNodeCellRenderer extends DefaultListCellRenderer {
                 label.setText(null);
                 label.setIcon(new ImageIcon(image));
             }
+
+            // Use a different border if this node is pinned
+            label.setBorder((model.isNodePinned(node)) ? _borderPinnedNode : null);
         }
 
         return comp;

@@ -1,6 +1,8 @@
 package smchan.freemind_my_plugin.mru;
 
-import javax.swing.DefaultListModel;
+import java.util.LinkedList;
+
+import javax.swing.AbstractListModel;
 
 import freemind.controller.Controller;
 import freemind.controller.MapModuleManager.MapModuleChangeObserver;
@@ -16,13 +18,18 @@ import freemind.view.mindmapview.NodeView;
  * Data model for list of MRU {@link MindMapNode} with adapters to register to
  * the current mind map as per user selection and to convert "map node events"
  * into MRU list updates.
+ * 
+ * [2024-03-13] Support pinned nodes in addition to MRU nodes
  */
-public class MRUNodesModel extends DefaultListModel<MindMapNode>
+public class MRUNodesModel extends AbstractListModel<MindMapNode>
         implements MapModuleChangeObserver, NodeLifetimeListener, NodeSelectionListener {
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger
             .getLogger(MRUNodesModel.class.getName());
 
     private static final long serialVersionUID = 1L;
+
+    private final LinkedList<MindMapNode> _lstPinnedNodes = new LinkedList<>();
+    private final LinkedList<MindMapNode> _lstMruNodes = new LinkedList<>();
 
     private final int _nbrMruElements;
     private Controller _controller;
@@ -37,12 +44,12 @@ public class MRUNodesModel extends DefaultListModel<MindMapNode>
         if (_inhibitMRU)
             return;
 
-        super.removeElement(node);
-        super.add(0, node);
-
-        // Remove overflow elements
-        if (super.size() > _nbrMruElements) {
-            super.remove(super.size() - 1);
+        if (_lstPinnedNodes.contains(node)) {
+            // Do nothing if the node is already pinned
+        } else {
+            // Move the MRU node to the top of MRU nodes list
+            removeMruNode(node);
+            addFirstMruNode(node);
         }
     }
 
@@ -51,7 +58,12 @@ public class MRUNodesModel extends DefaultListModel<MindMapNode>
         if (_inhibitMRU)
             return;
 
-        super.removeElement(node);
+        if (removePinnedNode(node)) {
+            // Pinned node removed
+        } else {
+            // Remove node from MRU nodes list
+            removeMruNode(node);
+        }
     }
 
     public void setController(Controller controller) {
@@ -92,7 +104,122 @@ public class MRUNodesModel extends DefaultListModel<MindMapNode>
         }
     }
 
+    // Methods from DefaultListModel<MindMapNode>
+    public void clear() {
+        int nbrMruNode = _lstMruNodes.size();
+
+        // Clear MRU nodes only
+        if (nbrMruNode > 0) {
+            int nbrPinnedNodes = _lstPinnedNodes.size();
+            _lstMruNodes.clear();
+            fireIntervalRemoved(this, nbrPinnedNodes, nbrPinnedNodes + nbrMruNode - 1);
+        }
+    }
+
+    public void togglePinStatus(MindMapNode node) {
+        if (removePinnedNode(node)) {
+            // Removed from pinned nodes list...
+            // If successful, add node to MRU nodes list
+            addFirstMruNode(node);
+        } else if (removeMruNode(node)) {
+            // Removed from MRU nodes list...
+            // If successful, add node to pinned nodes list
+            addLastPinnedNode(node);
+        }
+    }
+
+    public boolean isNodePinned(MindMapNode node) {
+        return _lstPinnedNodes.contains(node);
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Private methods
+
+    private void registerFromMapNodeEvents(ModeController modeController) {
+        if (modeController != null) {
+            // Register for node deletion events
+            modeController.registerNodeLifetimeListener(this, false);
+
+            // Register for selection change events
+            modeController.registerNodeSelectionListener(this, true);
+        }
+    }
+
+    private void unregisterFromMapNodeEvents(ModeController modeController) {
+        if (modeController != null) {
+            modeController.deregisterNodeLifetimeListener(this);
+            modeController.deregisterNodeSelectionListener(this);
+        }
+    }
+
+    /**
+     * Add a node at the end of pinned nodes list, firing list data event
+     * 
+     * @param node a non-null instance of MindMapNode
+     */
+    private void addLastPinnedNode(MindMapNode node) {
+        int nbrPinnedNodes = _lstPinnedNodes.size();
+        _lstPinnedNodes.addLast(node);
+        fireIntervalAdded(this, nbrPinnedNodes, nbrPinnedNodes);
+    }
+
+    /**
+     * Add a node at the top of MRU nodes list (not pinned), firing list data event
+     * 
+     * @param node a non-null instance of MindMapNode
+     */
+    private void addFirstMruNode(MindMapNode node) {
+        int nbrPinnedNodes = _lstPinnedNodes.size();
+        _lstMruNodes.addFirst(node);
+        fireIntervalAdded(this, nbrPinnedNodes, nbrPinnedNodes);
+
+        // Remove overflow elements in the MRU list
+        if (_lstMruNodes.size() > _nbrMruElements) {
+            _lstMruNodes.removeLast();
+            int totalNodes = _lstMruNodes.size() + nbrPinnedNodes;
+            fireIntervalRemoved(this, totalNodes, totalNodes);
+        }
+    }
+
+    /**
+     * Attempt to remove a pinned node, firing list data event when successful
+     * 
+     * @param node a non-null instance of MindMapNode
+     * @return true if remove successful, false otherwise (node not in the list of
+     *         pinned nodes)
+     */
+    private boolean removePinnedNode(MindMapNode node) {
+        int index = _lstPinnedNodes.indexOf(node);
+        if (index >= 0) {
+            _lstPinnedNodes.remove(node);
+            fireIntervalRemoved(this, index, index);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Attempt to remove a MRU node (not pinned), firing list data event when
+     * successful
+     * 
+     * @param node a non-null instance of MindMapNode
+     * @return true if remove successful, false otherwise (node not in the MRU list)
+     */
+    private boolean removeMruNode(MindMapNode node) {
+        int index = _lstMruNodes.indexOf(node);
+        if (index >= 0) {
+            int nbrPinnedNodes = _lstPinnedNodes.size();
+            _lstMruNodes.remove(node);
+            fireIntervalRemoved(this, index + nbrPinnedNodes, index + nbrPinnedNodes);
+            return true;
+        }
+
+        return false;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Implements MapModuleChangeObserver
 
     @Override
     public boolean isMapModuleChangeAllowed(MapModule oldMapModule, Mode oldMode, MapModule newMapModule,
@@ -130,6 +257,7 @@ public class MRUNodesModel extends DefaultListModel<MindMapNode>
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Implements NodeLifetimeListener
 
     @Override
     public void onPreDeleteNode(MindMapNode node) {
@@ -147,6 +275,7 @@ public class MRUNodesModel extends DefaultListModel<MindMapNode>
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Implements NodeSelectionListener
 
     @Override
     public void onUpdateNodeHook(MindMapNode node) {
@@ -174,22 +303,21 @@ public class MRUNodesModel extends DefaultListModel<MindMapNode>
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Implements methods from AbstractListModel<MindMapNode>
 
-    private void registerFromMapNodeEvents(ModeController modeController) {
-        if (modeController != null) {
-            // Register for node deletion events
-            modeController.registerNodeLifetimeListener(this, false);
-
-            // Register for selection change events
-            modeController.registerNodeSelectionListener(this, true);
-        }
+    @Override
+    public int getSize() {
+        return _lstMruNodes.size() + _lstPinnedNodes.size();
     }
 
-    private void unregisterFromMapNodeEvents(ModeController modeController) {
-        if (modeController != null) {
-            modeController.deregisterNodeLifetimeListener(this);
-            modeController.deregisterNodeSelectionListener(this);
+    @Override
+    public MindMapNode getElementAt(int index) {
+        int nbrPinnedNodes = _lstPinnedNodes.size();
+        if (index < nbrPinnedNodes) {
+            return _lstPinnedNodes.get(index);
         }
+
+        return _lstMruNodes.get(index - nbrPinnedNodes);
     }
 
 }

@@ -42,6 +42,7 @@ import smchan.freemind_my_plugin.SetCrossLink;
  * MRU nodes display.
  * 
  * [2024-03-12] Added pop-up menu on right-click with option to "Set cross link"
+ * [2024-03-13] Added option "Toggle pin staus" in pop-up menu
  */
 public class MRUNodesView extends JDialog {
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger
@@ -124,6 +125,7 @@ public class MRUNodesView extends JDialog {
         // Create pop-up menu
         JPopupMenu popupMenu = new JPopupMenu();
         popupMenu.add(new JMenuItem(new SetRemoteCrossLinksAction()));
+        popupMenu.add(new JMenuItem(new TogglePinStatusAction()));
 
         // Show pop-up menu at mouse cursor location
         Point point = MouseInfo.getPointerInfo().getLocation();
@@ -199,6 +201,14 @@ public class MRUNodesView extends JDialog {
         return action;
     }
 
+    void doTogglePinStatusAction() {
+        List<MindMapNode> selected = _jlistMRUNodes.getSelectedValuesList();
+        for (MindMapNode mindMapNode : selected) {
+            _mruModel.togglePinStatus(mindMapNode);
+        }
+
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private class SetRemoteCrossLinksAction extends AbstractAction {
         private static final long serialVersionUID = 1L;
@@ -210,6 +220,20 @@ public class MRUNodesView extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             doSetRemoteCrossLinks();
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private class TogglePinStatusAction extends AbstractAction {
+        private static final long serialVersionUID = 1L;
+
+        public TogglePinStatusAction() {
+            super("Toggle pin status");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            doTogglePinStatusAction();
         }
     }
 
@@ -229,8 +253,6 @@ public class MRUNodesView extends JDialog {
                 // Single-click with mouse right button
                 showContextualMenu();
                 evt.consume();
-            } else {
-                System.out.println(evt);
             }
         }
     }

@@ -38,7 +38,7 @@ public class ShowMRUNodes extends ModeControllerHookAdapter {
 
             _mruView.pack();
 
-            // Align the MRU dialog to the lower right cornrer of the owner frame
+            // Align the MRU dialog to the lower right corner of the owner frame
             Point pt = new Point();
             owner.getLocation(pt);
             pt.x += owner.getWidth() - _mruView.getWidth();
