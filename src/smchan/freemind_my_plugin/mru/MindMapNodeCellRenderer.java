@@ -44,7 +44,9 @@ public class MindMapNodeCellRenderer extends DefaultListCellRenderer {
 
     private CompositeIcon _compIcon = new CompositeIcon();
 
-    private final Border _borderPinnedNode;
+    private static final Color[] _pinnedNodeColors = { Color.GREEN, Color.MAGENTA, Color.BLUE, Color.ORANGE,
+            Color.CYAN, Color.DARK_GRAY, Color.YELLOW, Color.RED, };
+    private final Border[] _pinnedNodeBorders;
 
     public MindMapNodeCellRenderer() {
         _iconLink = getImageIcon("/images/Link.png");
@@ -52,7 +54,16 @@ public class MindMapNodeCellRenderer extends DefaultListCellRenderer {
         _iconMail = getImageIcon("/images/Mail.png");
         _iconExec = getImageIcon("/images/Executable.png");
 
-        _borderPinnedNode = BorderFactory.createMatteBorder(0, 8, 0, 0, Color.GREEN);
+        _pinnedNodeBorders = createBorders(_pinnedNodeColors);
+    }
+
+    private Border[] createBorders(Color[] colors) {
+        LinkedList<Border> lst = new LinkedList<>();
+        for (int i = 0; i < colors.length; i++) {
+            Color color = colors[i];
+            lst.add(BorderFactory.createMatteBorder(0, 8, 0, 0, color));
+        }
+        return lst.toArray(new Border[0]);
     }
 
     private ImageIcon getImageIcon(String resName) {
@@ -106,7 +117,7 @@ public class MindMapNodeCellRenderer extends DefaultListCellRenderer {
             }
 
             // Use a different border if this node is pinned
-            label.setBorder((model.isNodePinned(node)) ? _borderPinnedNode : null);
+            label.setBorder((model.isNodePinned(node)) ? _pinnedNodeBorders[index % _pinnedNodeBorders.length] : null);
         }
 
         return comp;
