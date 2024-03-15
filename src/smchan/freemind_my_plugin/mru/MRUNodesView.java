@@ -13,9 +13,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -124,8 +126,8 @@ public class MRUNodesView extends JDialog {
     void showContextualMenu() {
         // Create pop-up menu
         JPopupMenu popupMenu = new JPopupMenu();
-        popupMenu.add(new JMenuItem(new SetRemoteCrossLinksAction()));
         popupMenu.add(new JMenuItem(new TogglePinStatusAction()));
+        popupMenu.add(new JMenuItem(new SetRemoteCrossLinksAction()));
 
         // Show pop-up menu at mouse cursor location
         Point point = MouseInfo.getPointerInfo().getLocation();
@@ -209,12 +211,24 @@ public class MRUNodesView extends JDialog {
 
     }
 
+    private ImageIcon getImageIcon(String resName) {
+        URL url = getClass().getResource(resName);
+        if (url == null) {
+            LOGGER.warning("Failed to find resource: " + resName);
+            return new ImageIcon();
+        }
+
+        return new ImageIcon(url);
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private class SetRemoteCrossLinksAction extends AbstractAction {
         private static final long serialVersionUID = 1L;
 
         public SetRemoteCrossLinksAction() {
             super("Set cross link");
+            // Use the built-in link icon
+            putValue(SMALL_ICON, getImageIcon("/images/Link.png"));
         }
 
         @Override
@@ -229,6 +243,8 @@ public class MRUNodesView extends JDialog {
 
         public TogglePinStatusAction() {
             super("Toggle pin status");
+            // Use the built-in paper clip icon
+            putValue(SMALL_ICON, getImageIcon("resources/pin.png"));
         }
 
         @Override
