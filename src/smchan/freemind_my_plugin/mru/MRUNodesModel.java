@@ -261,7 +261,18 @@ public class MRUNodesModel extends AbstractListModel<MindMapNode>
 
     @Override
     public void onPreDeleteNode(MindMapNode node) {
+        recursiveRemoveNode(node);
+    }
+
+    private void recursiveRemoveNode(MindMapNode node) {
         removeNode(node);
+
+        // Recursively remove all children nodes
+        for (Object obj : node.getChildren()) {
+            if (obj instanceof MindMapNode) {
+                recursiveRemoveNode((MindMapNode) obj);
+            }
+        }
     }
 
     @Override
