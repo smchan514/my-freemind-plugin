@@ -18,7 +18,7 @@
 		<!-- {0} is the original text in the node -->
 		<!-- {1} is the date stamp -->
 		<plugin_property name="insert_format" value="{1} {0}"/>
-        <!-- Put an empty time_zone value to force local time (why?) -->
+        <!-- Put an empty time_zone value to force local time -->
 		<plugin_property name="time_zone" value=""/>
 	</plugin_action>
 	<plugin_action 

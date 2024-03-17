@@ -15,12 +15,15 @@ import freemind.modes.mindmapmode.MindMapController;
  * <UL>
  * <LI>ALL UPPER CASE
  * <li>all lower case
- * <LI>Title Case With Support of Minor Words
+ * <LI>Title Case With Support for Minor Words
  * </UL>
  */
 public class ToggleWordCases extends ExportHook {
     // Plugin resource name
     private static final String RES_KEY_MINOR_WORDS = "minor_words";
+
+    // Regex used to split a list of words separated by at least one whitespace
+    private static final String REGEX_WHITESPACES = "\\W+";
 
     private enum WordCase {
         ALL_UPPER_CASE,
@@ -78,7 +81,7 @@ public class ToggleWordCases extends ExportHook {
 
         if ((str = getResourceString(RES_KEY_MINOR_WORDS)) != null) {
             // Minor words separated by whitespace characters
-            String[] parts = str.split("\\W+");
+            String[] parts = str.split(REGEX_WHITESPACES);
             for (String p : parts) {
                 _minorWords.add(p);
             }
@@ -89,7 +92,7 @@ public class ToggleWordCases extends ExportHook {
 
     private void checkAtLeastOneNodeSelected(List<?> selected) {
         if (selected == null || selected.isEmpty()) {
-            throw new RuntimeException("Preconditions not met: at least one node selected");
+            throw new RuntimeException("No node selected");
         }
     }
 
@@ -122,12 +125,12 @@ public class ToggleWordCases extends ExportHook {
             return changeNodeTextToTitleCase(nodeText);
 
         default:
-            throw new RuntimeException("Unknown WordCase " + wordCase);
+            throw new RuntimeException("Unknown WordCase: " + wordCase);
         }
     }
 
     private String changeNodeTextToTitleCase(String nodeText) {
-        String[] parts = nodeText.split("\\W+");
+        String[] parts = nodeText.split(REGEX_WHITESPACES);
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < parts.length; i++) {
@@ -168,7 +171,7 @@ public class ToggleWordCases extends ExportHook {
     private WordCase getCurrentWordCase(MindMapNode node) {
         String text = node.getText();
         if (text == null || text.isEmpty()) {
-            throw new RuntimeException("Unable to determine current word case: the first select node has no text");
+            throw new RuntimeException("Unable to determine current word case: the first selected node has no text");
         }
 
         char[] chars = text.toCharArray();
