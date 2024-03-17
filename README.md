@@ -2,15 +2,16 @@
 
 Added "plugin actions":
 
-| Plugin action                                 | Keyboard shortcut |
-|-----------------------------------------------|-------------------|
-|Insert date stamp                              | F12               |
-|Insert local time stamp                        | SHIFT+F12         |
-|Insert UTC date time                           | SHIFT+ALT+F12     |
-|Open mindmap in Explorer                       | CTRL+F12          |
-|Put mindmap full path in clipboard             | CTRL+SHIFT+F12    |
-|Set cross links in two selected nodes          | ALT+SHIFT+L       |
-|Show the most recently used nodes in a dialog  | CTRL+M            |
+| Plugin action                                              | Keyboard shortcut |
+|------------------------------------------------------------|-------------------|
+|Insert date stamp                                           | F12               |
+|Insert local time stamp                                     | SHIFT+F12         |
+|Insert UTC date time                                        | SHIFT+ALT+F12     |
+|Open mindmap in Explorer                                    | CTRL+F12          |
+|Put mindmap full path in clipboard                          | CTRL+SHIFT+F12    |
+|Set cross links in two selected nodes                       | ALT+SHIFT+L       |
+|Show the most recently used nodes in a dialog               | CTRL+M            |
+|Toggle word cases: "UPPER CASE", "lower case", "Title Case" | SHIFT+F3          |
 
 ## How to compile and deploy manually
 
