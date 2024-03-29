@@ -89,7 +89,7 @@
 		key_stroke="shift F3"
 		class_name="smchan.freemind_my_plugin.ToggleWordCases">
 		<plugin_mode class_name="freemind.modes.mindmapmode"/>
-		<plugin_menu location="menu_bar/view/toggle_word_cases"/>
+		<plugin_menu location="menu_bar/format/toggle_word_cases"/>
 		<plugin_property name="minor_words" value="and as but for if nor or or so yet a an the at by in of per to via de du des à au aux le la les dans sous sur"/>
 	</plugin_action>
 </plugin>

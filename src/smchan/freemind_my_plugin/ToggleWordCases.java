@@ -1,12 +1,18 @@
 package smchan.freemind_my_plugin;
 
+import java.awt.Component;
 import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 import freemind.extensions.ExportHook;
 import freemind.main.HtmlTools;
+import freemind.modes.ControllerAdapter;
 import freemind.modes.MindMapNode;
 import freemind.modes.mindmapmode.MindMapController;
 
@@ -19,6 +25,9 @@ import freemind.modes.mindmapmode.MindMapController;
  * </UL>
  */
 public class ToggleWordCases extends ExportHook {
+    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger
+            .getLogger(ToggleWordCases.class.getName());
+
     // Plugin resource name
     private static final String RES_KEY_MINOR_WORDS = "minor_words";
 
@@ -53,6 +62,18 @@ public class ToggleWordCases extends ExportHook {
         }
 
         MindMapController mmc = (MindMapController) getController();
+
+        // Handle the case where this plugin is activated when a short node edit is in
+        // progress. Check if keyboard focus is on a JTextField...
+        JTextField jtf = getShortNodeEditTextField(mmc);
+        if (jtf != null) {
+            applyCaseChangeInTextField(jtf);
+        } else {
+            applyCaseChangeToSelectedNodes(mmc);
+        }
+    }
+
+    private void applyCaseChangeToSelectedNodes(MindMapController mmc) {
         List<?> selected = mmc.getSelecteds();
         WordCase currCase = null;
 
@@ -63,8 +84,7 @@ public class ToggleWordCases extends ExportHook {
             // Determine the current case using the first selected ode
             currCase = getCurrentWordCase((MindMapNode) selected.get(0));
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -74,6 +94,43 @@ public class ToggleWordCases extends ExportHook {
         for (Object object : selected) {
             changeWordCase(mmc, (MindMapNode) object, nextCase);
         }
+    }
+
+    private void applyCaseChangeInTextField(JTextField jtf) {
+        int startPos = jtf.getSelectionStart();
+        int endPos = jtf.getSelectionEnd();
+        boolean hasSelectedText = (startPos != endPos);
+        String nodeText = (hasSelectedText) ? jtf.getSelectedText() : jtf.getText();
+        WordCase currCase = getCurrentWordCase(nodeText);
+        WordCase nextCase = getNextCase(currCase);
+        String newText = changeWordCase(nodeText, nextCase);
+
+        if (hasSelectedText) {
+            Document doc = jtf.getDocument();
+            try {
+                // Remove previously selected text then insert the new text
+                doc.remove(startPos, endPos - startPos);
+                doc.insertString(startPos, newText, null);
+            } catch (BadLocationException e) {
+                LOGGER.log(Level.WARNING, "Failed to manipulate document", e);
+            }
+
+            // Select the new text
+            jtf.select(startPos, startPos + newText.length());
+        } else {
+            // Replace the entire text field
+            jtf.setText(newText);
+        }
+        return;
+    }
+
+    private JTextField getShortNodeEditTextField(ControllerAdapter mmc) {
+        Component comp = mmc.getFrame().getJFrame().getFocusOwner();
+        if (comp instanceof JTextField) {
+            return (JTextField) comp;
+        }
+
+        return null;
     }
 
     private void performInit() {
@@ -103,14 +160,19 @@ public class ToggleWordCases extends ExportHook {
             return;
         }
 
+        String newText = changeWordCase(nodeText, wordCase);
+        mmc.setNodeText(node, newText);
+    }
+
+    private String changeWordCase(String nodeText, WordCase wordCase) {
+
         if (HtmlTools.isHtmlNode(nodeText)) {
             // Strip HTML (rich formatting) in original node text
             nodeText = HtmlTools.htmlToPlain(nodeText);
         }
 
         // Perform the edit with automatic undo provided by MindMapController
-        String newText = transformNodeText(wordCase, nodeText);
-        mmc.setNodeText(node, newText);
+        return transformNodeText(wordCase, nodeText);
     }
 
     private String transformNodeText(WordCase wordCase, String nodeText) {
@@ -145,14 +207,14 @@ public class ToggleWordCases extends ExportHook {
             if (p.isEmpty()) {
                 continue;
             }
-                
+
             // Don't change minor words after the first word
             if (i > 0 && _minorWords.contains(p)) {
                 sb.append(p);
             } else {
                 // Set the first letter to upper case
                 sb.append(Character.toUpperCase(p.charAt(0)));
-                
+
                 // Change the remaining letters to lower case
                 if (p.length() > 1) {
                     sb.append(p.substring(1).toLowerCase());
@@ -174,6 +236,10 @@ public class ToggleWordCases extends ExportHook {
             throw new RuntimeException("Unable to determine current word case: the first selected node has no text");
         }
 
+        return getCurrentWordCase(text);
+    }
+
+    private WordCase getCurrentWordCase(String text) {
         char[] chars = text.toCharArray();
         if (isAllUpperCase(chars)) {
             return WordCase.ALL_UPPER_CASE;
