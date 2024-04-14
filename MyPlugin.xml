@@ -46,6 +46,18 @@
 		<plugin_property name="insert_format" value="{1} {0}"/>
 	</plugin_action>
 	<plugin_action 
+		documentation="Insert random string" 
+		name="Insert random string" base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/insert_random_string" 
+		class_name="smchan.freemind_my_plugin.InsertRandomString">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/insert/insert_random_string"/>
+		<plugin_property name="default_max_total" value="64"/>
+		<plugin_property name="default_min_letters" value="20"/>
+		<plugin_property name="default_min_digits" value="2"/>
+		<plugin_property name="default_min_puncts" value="2"/>
+	</plugin_action>
+	<plugin_action 
 		documentation="Open mindmap in Explorer" 
 		name="Open in Explorer" base="freemind.extensions.ModeControllerHookAdapter" 
 		label="plugins/MyPlugin/open_in_explorer" 
