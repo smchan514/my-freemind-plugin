@@ -780,7 +780,11 @@ public class PasteAction extends AbstractAction implements ActorXml {
                     amountAlreadySet = true;
                 }
             }
-            if (t.isDataFlavorSupported(DataFlavor.imageFlavor)) {
+            // [2024-04-21 SMCHAN] Skip pasting image content if some other data (text,
+            // HTML, etc.) has been identified. This is to avoid the unnecessary generation
+            // of an image file when pasting texts copied from MSFT applications (Word,
+            // Excel, Outlook).
+            if (!amountAlreadySet && t.isDataFlavorSupported(DataFlavor.imageFlavor)) {
                 logger.info("image...");
 
                 try {
