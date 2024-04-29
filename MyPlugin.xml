@@ -113,4 +113,24 @@
 		<plugin_menu location="menu_bar/format/toggle_word_cases"/>
 		<plugin_property name="minor_words" value="and as but for if nor or or so yet a an the at by in of per to via de du des à au aux le la les dans sous sur"/>
 	</plugin_action>
+	<plugin_action 
+		documentation="Show stats of selected nodes" 
+		name="Show nodes stats"
+        base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/show_nodes_stats" 
+		class_name="smchan.freemind_my_plugin.ShowSelectedNodesStats">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/view/show_nodes_stats"/>
+	</plugin_action>
+    <!-- 
+	<plugin_action 
+		documentation="Advanced search (prototype)" 
+		name="Advanced search"
+        base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/show_mru_nodes" 
+		class_name="smchan.freemind_my_plugin.AdvancedSearch">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/view/advanced_search"/>
+	</plugin_action>
+     -->
 </plugin>
