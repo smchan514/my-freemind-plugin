@@ -12,6 +12,9 @@ Added "plugin actions":
 |Set cross links in two selected nodes                       | ALT+SHIFT+L       |
 |Show the most recently used nodes in a dialog               | CTRL+M            |
 |Toggle word cases: "UPPER CASE", "lower case", "Title Case" | SHIFT+F3          |
+|Insert random string                                        | N/A               |
+|Insert 'week number' nodes                                  | N/A               |
+|Show nodes stats                                            | N/A               |
 
 ## How to compile and deploy manually
 

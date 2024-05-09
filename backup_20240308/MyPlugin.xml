@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- [2020-12-22] "menu_bar/insert/insert_utc_date_time" SHIFT-F12 -->
+<plugin	label="plugins/MyPlugin">
+	<plugin_classpath jar="myplugin/myplugin.jar"/>
+	<plugin_action 
+		documentation="Insert date stamp" 
+		name="Insert date stamp" base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/insert_date" 
+		key_stroke="F12"
+		class_name="smchan.freemind_my_plugin.InsertDateStamp">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/insert/insert_date"/>
+		
+		<!-- date format pattern, see http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html -->
+		<plugin_property name="date_format" value="'['yyyy-MM-dd']'"/>
+		
+		<!-- date insertion patterne -->
+		<!-- {0} is the original text in the node -->
+		<!-- {1} is the date stamp -->
+		<plugin_property name="insert_format" value="{1} {0}"/>
+        <!-- Put an empty time_zone value to force local time (why?) -->
+		<plugin_property name="time_zone" value=""/>
+	</plugin_action>
+	<plugin_action 
+		documentation="Insert local date time" 
+		name="Insert local date time" base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/insert_local_date_time" 
+		key_stroke="shift F12"
+		class_name="smchan.freemind_my_plugin.InsertDateStamp">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/insert/insert_local_date_time"/>
+		<plugin_property name="time_zone" value=""/>
+		<plugin_property name="date_format" value="'['yyyy-MM-dd'T'HH:mm:ssZ']'"/>
+		<plugin_property name="insert_format" value="{1} {0}"/>
+	</plugin_action>
+	<plugin_action 
+		documentation="Insert UTC date time" 
+		name="Insert UTC date time" base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/insert_utc_date_time" 
+		key_stroke="shift alt F12"
+		class_name="smchan.freemind_my_plugin.InsertDateStamp">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/insert/insert_utc_date_time"/>
+		<plugin_property name="time_zone" value="UTC"/>
+		<plugin_property name="date_format" value="'['yyyy-MM-dd'T'HH:mm:ss'Z]'"/>
+		<plugin_property name="insert_format" value="{1} {0}"/>
+	</plugin_action>
+	<plugin_action 
+		documentation="Open mindmap in Explorer" 
+		name="Open in Explorer" base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/open_in_explorer" 
+		key_stroke="ctrl F12"
+		class_name="smchan.freemind_my_plugin.OpenMindMapInExplorer">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/navigate/open_in_explorer"/>
+	</plugin_action>
+	<plugin_action 
+		documentation="Put mindmap full path in clipboard" 
+		name="Put mindmap full path in clipboard" base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/put_name_in_clipboard" 
+		key_stroke="shift ctrl F12"
+		class_name="smchan.freemind_my_plugin.PutMindMapNameInClipboard">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/navigate/put_name_in_clipboard"/>
+	</plugin_action>
+	<plugin_action 
+		documentation="Set cross links in two selected nodes" 
+		name="Set cross link" base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/set_cross_link" 
+		key_stroke="shift alt L"
+		class_name="smchan.freemind_my_plugin.SetCrossLink">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/insert/set_cross_link"/>
+	</plugin_action>
+	<!-- Test -->
+	<plugin_action 
+		documentation="Show the most recently used nodes in a dialog" 
+		name="Show MRU nodes" base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/show_mru_nodes" 
+		key_stroke="ctrl M"
+		class_name="smchan.freemind_my_plugin.ShowMRUNodes">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/view/show_mru_nodes"/>
+		<plugin_property name="nbr_mru_elements" value="25"/>
+	</plugin_action>
+</plugin>
