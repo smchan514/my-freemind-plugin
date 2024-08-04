@@ -63,9 +63,7 @@ public class InsertRandomStringConfigDialog extends JDialog {
         getContentPane().add(createButtonsPanel(), BorderLayout.SOUTH);
 
         KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-        String actionMapKey = "RandomStringConfigDialog:ESCAPE";
-        getRootPane().getInputMap().put(keyStroke, actionMapKey);
-        getRootPane().getActionMap().put(actionMapKey, new CancelAction());
+        getRootPane().registerKeyboardAction(new CancelAction(), keyStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
         getRootPane().setDefaultButton(_jbOK);
 
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

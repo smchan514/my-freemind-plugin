@@ -122,6 +122,25 @@
 		<plugin_mode class_name="freemind.modes.mindmapmode"/>
 		<plugin_menu location="menu_bar/view/show_nodes_stats"/>
 	</plugin_action>
+	<plugin_action 
+		documentation="Edit encrypted attribute" 
+		name="Edit encrypted attribute"
+        base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/edit_encrypted_attribute" 
+        key_stroke="shift F2"
+		class_name="smchan.freemind_my_plugin.EditEncryptedAttribute">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/view/edit_encrypted_attribute"/>
+	</plugin_action>
+	<plugin_action 
+		documentation="Reset attribute encryption (e.g. clear cache)" 
+		name="Reset attribute encryption"
+        base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/reset_encrypt_util" 
+		class_name="smchan.freemind_my_plugin.ResetEncryptUtil">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/view/reset_encrypt_util"/>
+	</plugin_action>
     <!-- 
 	<plugin_action 
 		documentation="Advanced search (prototype)" 

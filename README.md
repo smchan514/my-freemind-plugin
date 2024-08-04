@@ -12,9 +12,16 @@ Added "plugin actions":
 |Set cross links in two selected nodes                       | ALT+SHIFT+L       |
 |Show the most recently used nodes in a dialog               | CTRL+M            |
 |Toggle word cases: "UPPER CASE", "lower case", "Title Case" | SHIFT+F3          |
+|Edit encrypted attribute `__ENC__` of the selected node     | SHIFT+F2          |
+|Reset encryption (clear cache of secrets)                   | N/A               |
 |Insert random string                                        | N/A               |
 |Insert 'week number' nodes                                  | N/A               |
 |Show nodes stats                                            | N/A               |
+
+Notes:
+1. On the "encrypted attribute" feature:
+    1. Use OpenJDK or Amazon Corretto JRE/JDK to enable use of AES-256.
+    2. Use JRE/JDK 9 or later to enable auto reset on user lock screen (Tested with Amazon Corretto JDK 11.0.24.8.1).
 
 ## How to compile and deploy manually
 

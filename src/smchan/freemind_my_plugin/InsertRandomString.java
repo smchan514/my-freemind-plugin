@@ -50,12 +50,12 @@ public class InsertRandomString extends ExportHook {
         // Get user input from a modal dialog
         InsertRandomStringConfigDialog dialog = new InsertRandomStringConfigDialog(_defaultMaxTotal, _defaultMinLetters,
                 _defaultMinDigits, _defaultMinPuncts);
-        
+
         // Skip the rest if the user cancels
         if (!dialog.showDialog()) {
             return;
         }
-        
+
         try {
             int maxTotal = dialog.getMaxTotal();
             int nbrLetters = dialog.getNumberLetters();
@@ -68,9 +68,9 @@ public class InsertRandomString extends ExportHook {
             MindMapNode selected = (MindMapNode) list.get(0);
             MindMapController mmc = (MindMapController) getController();
             mmc.edit.setNodeText(selected, str);
-        }
-        catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(getController().getView(), e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 

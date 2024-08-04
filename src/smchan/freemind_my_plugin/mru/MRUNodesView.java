@@ -139,7 +139,7 @@ public class MRUNodesView extends JDialog {
         // Precondition 1: exactly two nodes selected in the list
         List<MindMapNode> selected = _jlistMRUNodes.getSelectedValuesList();
         if (selected.size() != 2) {
-            JOptionPane.showMessageDialog(null, "Preconditions not met: get two nodes selected", "Error",
+            JOptionPane.showMessageDialog(this, "Preconditions not met: get two nodes selected", "Error",
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -153,7 +153,7 @@ public class MRUNodesView extends JDialog {
 
         // Warn for overwriting links
         if (node1.getLink() != null || node2.getLink() != null) {
-            int rc = JOptionPane.showConfirmDialog(null, "Overwrite existing link(s) in nodes?", "Confirm",
+            int rc = JOptionPane.showConfirmDialog(this, "Overwrite existing link(s) in nodes?", "Confirm",
                     JOptionPane.OK_CANCEL_OPTION);
 
             if (rc != JOptionPane.OK_OPTION) {

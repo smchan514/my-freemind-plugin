@@ -38,8 +38,8 @@ public class SetCrossLink extends ExportHook {
         // Check for the preconditions
         List<?> selected = getController().getSelecteds();
         if (selected == null || selected.size() != 2) {
-            JOptionPane.showMessageDialog(null, "Preconditions not met: get two nodes selected", "Error",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(getController().getView(), "Preconditions not met: get two nodes selected",
+                    "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -48,8 +48,8 @@ public class SetCrossLink extends ExportHook {
         MindMapNode node2 = (MindMapNode) selected.get(1);
 
         if (node1.getLink() != null || node2.getLink() != null) {
-            int rc = JOptionPane.showConfirmDialog(null, "Overwrite existing link(s) in nodes?", "Confirm",
-                    JOptionPane.OK_CANCEL_OPTION);
+            int rc = JOptionPane.showConfirmDialog(getController().getView(), "Overwrite existing link(s) in nodes?",
+                    "Confirm", JOptionPane.OK_CANCEL_OPTION);
 
             if (rc != JOptionPane.OK_OPTION) {
                 // Cancel
