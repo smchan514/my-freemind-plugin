@@ -44,7 +44,7 @@ import smchan.freemind_my_plugin.SetCrossLink;
  * MRU nodes display.
  * 
  * [2024-03-12] Added pop-up menu on right-click with option to "Set cross link"
- * [2024-03-13] Added option "Toggle pin staus" in pop-up menu
+ * [2024-03-13] Added option "Toggle pin status" in pop-up menu
  */
 public class MRUNodesView extends JDialog {
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger

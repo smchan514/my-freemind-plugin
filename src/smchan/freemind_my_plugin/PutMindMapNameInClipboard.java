@@ -16,6 +16,8 @@ import freemind.modes.ModeController;
 /**
  * Put into system clip-board the URL to the currently selected node or, if no
  * nodes are selected, the currently visible mind map.
+ * 
+ * [2024-09-20] HTML-escape file path to support space characters
  */
 public class PutMindMapNameInClipboard extends ExportHook implements ClipboardOwner {
     public PutMindMapNameInClipboard() {
@@ -60,6 +62,10 @@ public class PutMindMapNameInClipboard extends ExportHook implements ClipboardOw
         }
 
         String filePath = file.getAbsolutePath();
+
+        // Perform HTML escape to support file path containing space characters
+        filePath = escapeFilePath(filePath);
+
         ModeController modeController = node.getMap().getModeController();
 
         // Convert the filePath to point to the selected node
@@ -69,6 +75,18 @@ public class PutMindMapNameInClipboard extends ExportHook implements ClipboardOw
         sb.append('#');
         sb.append(modeController.getNodeID(node));
         return sb.toString();
+    }
+
+    /**
+     * Escape an assumed file path for HTML / URL compatibility. For the moment it
+     * means replacing the space character ' ' by the string "%20"
+     * 
+     * @param path non-null string representing a valid file path
+     * @return escaped version of the file path
+     */
+    private static String escapeFilePath(String path) {
+        assert (path != null);
+        return path.replace(" ", "%20");
     }
 
 }
