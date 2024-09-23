@@ -141,6 +141,15 @@
 		<plugin_mode class_name="freemind.modes.mindmapmode"/>
 		<plugin_menu location="menu_bar/view/reset_encrypt_util"/>
 	</plugin_action>
+	<plugin_action 
+		documentation="Repacakge encrypted attributes (TRANSITIONAL)" 
+		name="Repacakge encrypted attributes"
+        base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/repackage_encrypted_attr" 
+		class_name="smchan.freemind_my_plugin.encrypted_attr.ReserializeEncryptedAttributes">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/view/repackage_encrypted_attr"/>
+	</plugin_action>
     <!-- 
 	<plugin_action 
 		documentation="Advanced search (prototype)" 

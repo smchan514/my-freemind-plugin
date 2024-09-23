@@ -20,6 +20,7 @@ public class EditEncryptedAttribute extends ModeControllerHookAdapter {
 
     private static final String DEFAULT_ENCRYPTED_ATTR_NAME = "__ENC__";
     private static final String PROP_NAME_ENCRYPT_ATTR_KEYSTORE_PATH = "encrypt_attr.keystore_path";
+    private static final String PROP_NAME_ENCRYPT_ATTR_DEFAULT_KEY_ALIAS = "encrypt_attr.default_key_alias";
     private static final String PROP_NAME_ENCRYPT_ATTR_DISBALE_MSG_NO_AUTO_RESET = "encrypt_attr.disable_msg_no_auto_reset";
 
     private boolean _initialized;
@@ -53,15 +54,18 @@ public class EditEncryptedAttribute extends ModeControllerHookAdapter {
         // decides to cancel midway
         try {
             String path = mmc.getController().getProperty(PROP_NAME_ENCRYPT_ATTR_KEYSTORE_PATH);
+            String alias = mmc.getController().getProperty(PROP_NAME_ENCRYPT_ATTR_DEFAULT_KEY_ALIAS);
             EncryptUtil.getInstance().setKeystorePath(path);
-            EncryptUtil.getInstance().getSecretKey();
+            EncryptUtil.getInstance().setDefaultKeyAlias(alias);
+            EncryptUtil.getInstance().getDefaultSecretKey();
         } catch (UserCancelledException uce) {
             // Skip the rest on user cancellation
             return;
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Uncaught exception", e);
-            JOptionPane.showMessageDialog(getController().getView(), "Failed to get keystore:\n\n" + e.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(getController().getView(),
+                    "Failed to get default secret key in keystore:\n\n" + e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -76,8 +80,9 @@ public class EditEncryptedAttribute extends ModeControllerHookAdapter {
                 LOGGER.log(Level.WARNING, "Uncaught exception", e);
 
                 int opt = JOptionPane.showConfirmDialog(getController().getView(),
-                        "Failed to decrypt existing value!\nProceed to edit by discarding current value?", "Warning",
-                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+                        "Failed to decrypt existing value!\nProceed to edit by discarding current value?\n\nError: "
+                                + e.getMessage(),
+                        "Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
                 if (opt != JOptionPane.OK_OPTION) {
                     // Skip the rest if not OK

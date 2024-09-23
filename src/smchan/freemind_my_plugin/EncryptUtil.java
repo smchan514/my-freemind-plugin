@@ -1,17 +1,12 @@
 package smchan.freemind_my_plugin;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStore.SecretKeyEntry;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Base64;
-import java.util.Base64.Encoder;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -20,33 +15,25 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.security.auth.DestroyFailedException;
 
+import smchan.freemind_my_plugin.encrypted_attr.CipherAlgoSelection;
+import smchan.freemind_my_plugin.encrypted_attr.EncryptedAttribute;
+import smchan.freemind_my_plugin.encrypted_attr.EncryptedAttributeV1;
+
 public class EncryptUtil {
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger
             .getLogger(EncryptUtil.class.getName());
-
-    // Header size in bytes:
-    // Magic number: 2 bytes
-    // Version: 1 byte
-    // Reserved: 1 byte
-    // IV vector size: 2 bytes
-    private static final int HEADER_SIZE = 6;
-
-    // 2-byte magic number giving "EN" prefix in BASE64 encoding
-    private static final short MAGIC_NUMBER = 0x10d0;
 
     private static final String DEFAULT_CIPHER_ALGORITHM = "AES_256/GCM/NoPadding";
     private static final int DEFAULT_GCM_TAG_LENGTH = 128;
     private static final int DEFAULT_CIPHER_IV_SIZE = 16;
 
-    private static final int CURRENT_VERSION = 0;
-
     private static final String DEFAULT_KEYSTORE_FILE_NAME = ".keystore";
-    private static final String DEFAULT_KEY_ALIAS = "privateKeyAlias";
 
     private static EncryptUtil _instance;
 
     private final HashMap<String, SecretKey> _mapKeys = new HashMap<>();
     private String _keystorePath;
+    private String _defaultKeyAlias;
 
     private EncryptUtil() {
         // ...
@@ -75,27 +62,27 @@ public class EncryptUtil {
         _keystorePath = path;
     }
 
-    public void getSecretKey() {
-        getSecretKey(DEFAULT_KEY_ALIAS);
+    public void setDefaultKeyAlias(String alias) {
+        _defaultKeyAlias = alias;
+    }
+
+    public void getDefaultSecretKey() {
+        getSecretKey(_defaultKeyAlias);
     }
 
     public String encrypt(String content) {
-        SecretKey secretKey = getSecretKey(DEFAULT_KEY_ALIAS);
-
         try {
-            return encrypt(DEFAULT_CIPHER_ALGORITHM, content, secretKey);
+            return encrypt(DEFAULT_CIPHER_ALGORITHM, content, _defaultKeyAlias);
         } catch (Exception e) {
-            throw new RuntimeException("Failed", e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
     public String decrypt(String content) {
-        SecretKey secretKey = getSecretKey(DEFAULT_KEY_ALIAS);
-
         try {
-            return decrypt(DEFAULT_CIPHER_ALGORITHM, content, secretKey);
+            return decrypt(DEFAULT_CIPHER_ALGORITHM, content);
         } catch (Exception e) {
-            throw new RuntimeException("Failed", e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -120,6 +107,16 @@ public class EncryptUtil {
                 ks.load(fis, password);
             }
 
+            // Check if the key alias exists
+            if (!ks.containsAlias(keyAlias)) {
+                throw new RuntimeException("key alias '"+keyAlias+"' not found in keystore");
+            }
+
+            // Check if the key alias corresponds to the secret key entry
+            if (!ks.entryInstanceOf(keyAlias, SecretKeyEntry.class)) {
+                throw new RuntimeException("key alias '" + keyAlias + "' not a secret key entry");
+            }
+
             // Get the secret key from the keystore using the entry password
             char[] entryPassword = PasswordDialog
                     .getPassword("Enter key entry password\n(ENTER to use keystore password):");
@@ -133,7 +130,7 @@ public class EncryptUtil {
         } catch (UserCancelledException uce) {
             throw uce;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to get secret key from keystore", e);
+            throw new RuntimeException("Failed to get secret key '" + keyAlias + "' from keystore", e);
         } finally {
             clearArray(password);
         }
@@ -148,71 +145,37 @@ public class EncryptUtil {
         return new File(dir, DEFAULT_KEYSTORE_FILE_NAME);
     }
 
-    private static String encrypt(String algorithm, String cleartext, SecretKey secretKey) throws Exception {
+    private String encrypt(String algorithm, String cleartext, String secretKeyAlias) throws Exception {
         byte[] ivBytes = generateRandomBytes(DEFAULT_CIPHER_IV_SIZE);
         GCMParameterSpec pspec = new GCMParameterSpec(DEFAULT_GCM_TAG_LENGTH, ivBytes);
+        Key secretKey = getSecretKey(secretKeyAlias);
 
         // Encrypt input clear text
         Cipher cipher = Cipher.getInstance(algorithm);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, pspec);
         byte[] cipherText = cipher.doFinal(cleartext.getBytes());
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-        try (DataOutputStream dos = new DataOutputStream(baos)) {
-            // Write the header
-            dos.writeShort(MAGIC_NUMBER);
-            // Version 0
-            dos.write(0);
-            // Reserved byte: always 0
-            dos.write(0);
-            // IV size in bytes
-            dos.writeShort(ivBytes.length);
+        EncryptedAttributeV1 ea = new EncryptedAttributeV1();
+        ea.setCipherAlgo(CipherAlgoSelection.AES_256_GCM_NoPadding_TAG128);
+        ea.setSecretKeyAlias(secretKeyAlias);
+        ea.setIV(ivBytes);
+        ea.setCipherText(cipherText);
 
-            // Append the IV
-            dos.write(ivBytes);
-
-            // Append the encrypted text
-            dos.write(cipherText);
-        }
-
-        // BASE64 encode the packet
-        Encoder base64encoder = Base64.getEncoder();
-        return base64encoder.encodeToString(baos.toByteArray());
+        return ea.encodeBase64();
     }
 
-    private static String decrypt(String algorithm, String cipherText, SecretKey secretKey) throws Exception {
-        byte[] encBytes = Base64.getDecoder().decode(cipherText);
+    private String decrypt(String algorithm, String based64encoded) throws Exception {
+        EncryptedAttribute ea = EncryptedAttribute.decodeBase64(based64encoded);
+        byte[] iv = ea.getIV();
+        byte[] cipherText = ea.getCipherText();
+        String secretKeyAlias = ea.getSecretKeyAlias();
 
-        // Perform decryption only if the magic number is verified
-        ByteBuffer bbHeader = ByteBuffer.wrap(encBytes, 0, HEADER_SIZE);
-        bbHeader.order(ByteOrder.BIG_ENDIAN);
-        if ((0xffff & bbHeader.getShort()) != MAGIC_NUMBER) {
-            throw new RuntimeException("Not a recognized encrypted node");
-        }
+        Key secretKey = getSecretKey(secretKeyAlias);
+        GCMParameterSpec pspec = new GCMParameterSpec(DEFAULT_GCM_TAG_LENGTH, iv, 0, iv.length);
 
-        // Read version byte
-        int version = 0xff & bbHeader.get();
-        if (version != CURRENT_VERSION) {
-            throw new RuntimeException("Unsupported encrypted payload version " + version);
-        }
-
-        // Read reserved byte
-        int reserved = bbHeader.get();
-        if (reserved != 0) {
-            throw new RuntimeException("Unexpected header content");
-        }
-
-        // Read IV size
-        int ivSize = 0xffff & bbHeader.getShort();
-
-        // Read the IV block and construct GCM parameter
-        int offset = HEADER_SIZE;
-        GCMParameterSpec pspec = new GCMParameterSpec(DEFAULT_GCM_TAG_LENGTH, encBytes, offset, ivSize);
-
-        offset += ivSize;
         Cipher cipher = Cipher.getInstance(algorithm);
         cipher.init(Cipher.DECRYPT_MODE, secretKey, pspec);
-        byte[] plainText = cipher.doFinal(encBytes, offset, encBytes.length - offset);
+        byte[] plainText = cipher.doFinal(cipherText, 0, cipherText.length);
         return new String(plainText);
     }
 
@@ -225,4 +188,5 @@ public class EncryptUtil {
         new SecureRandom().nextBytes(salt);
         return salt;
     }
+
 }
