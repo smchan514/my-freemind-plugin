@@ -31,11 +31,12 @@ public class ShowNodePath extends ModeControllerHookAdapter {
         // Get the path to the selected node
         MindMapNode node = (MindMapNode) selected.get(0);
         LinkedList<String> path = new LinkedList<>();
-        node = node.getParentNode();
 
         // Iterate until we hit the root node
+        node = node.getParentNode();
         while (node != null) {
-            path.addFirst(node.getText());
+            // Get plain text to avoid HTML
+            path.addFirst(node.getPlainTextContent());
             node = node.getParentNode();
         }
 
