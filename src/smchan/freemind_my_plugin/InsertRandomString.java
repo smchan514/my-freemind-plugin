@@ -1,5 +1,10 @@
 package smchan.freemind_my_plugin;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +15,7 @@ import freemind.extensions.ExportHook;
 import freemind.modes.MindMapNode;
 import freemind.modes.mindmapmode.MindMapController;
 
-public class InsertRandomString extends ExportHook {
+public class InsertRandomString extends ExportHook implements ClipboardOwner {
     private static final char CHAR_LETTERS[] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
             'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
             'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', };
@@ -61,13 +66,22 @@ public class InsertRandomString extends ExportHook {
             int nbrLetters = dialog.getNumberLetters();
             int nbrDigits = dialog.getNumberDigits();
             int nbrPunctuations = dialog.getNumberPuncts();
+            boolean copyToClipboard = dialog.getCopyToClipboard();
             String str = generateString(maxTotal, nbrLetters, nbrDigits, nbrPunctuations);
 
-            // Assign the new text to the current node
-            List<?> list = getController().getSelecteds();
-            MindMapNode selected = (MindMapNode) list.get(0);
-            MindMapController mmc = (MindMapController) getController();
-            mmc.edit.setNodeText(selected, str);
+            if (copyToClipboard) {
+                // Copy generated string to clipboard
+                StringSelection stringSelection = new StringSelection(str);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(stringSelection, this);
+            } else {
+                // Assign the new text to the current node
+                List<?> list = getController().getSelecteds();
+                MindMapNode selected = (MindMapNode) list.get(0);
+                MindMapController mmc = (MindMapController) getController();
+                mmc.edit.setNodeText(selected, str);
+            }
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(getController().getView(), e.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
@@ -148,6 +162,11 @@ public class InsertRandomString extends ExportHook {
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public void lostOwnership(Clipboard clipboard, Transferable contents) {
+        // Nothing to do...
     }
 
 }

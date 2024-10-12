@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -43,6 +44,7 @@ public class InsertRandomStringConfigDialog extends JDialog {
     private JSpinner _jspMinDigits;
     private JSpinner _jspMinPuncts;
     private JButton _jbOK;
+    private JCheckBox _jcbCopyToClipboard;
 
     private boolean _confirmed;
 
@@ -161,6 +163,15 @@ public class InsertRandomStringConfigDialog extends JDialog {
         comp = _jspMinPuncts = new JSpinner(spinnerModel);
         panel.add(comp, gbc);
 
+        ///////////////////////
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = DEFAULT_INSETS;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.weightx = 1;
+        comp = _jcbCopyToClipboard = new JCheckBox("Copy to clipboard");
+        panel.add(comp, gbc);
+
         return panel;
     }
 
@@ -190,6 +201,10 @@ public class InsertRandomStringConfigDialog extends JDialog {
 
     public int getNumberPuncts() {
         return (int) _jspMinPuncts.getValue();
+    }
+
+    public boolean getCopyToClipboard() {
+        return _jcbCopyToClipboard.isSelected();
     }
 
     void doOkAction() {

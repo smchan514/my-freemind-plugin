@@ -85,6 +85,16 @@
 		<plugin_menu location="menu_bar/insert/set_cross_link"/>
 	</plugin_action>
 	<plugin_action 
+		documentation="Insert cross-linked node pair" 
+		name="Insert cross-linked node pair"
+        base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/insert_cross_linked_node_pair" 
+		key_stroke="shift ctrl L"
+		class_name="smchan.freemind_my_plugin.InsertCrossLinkedNodePair">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/insert/insert_cross_linked_node_pair"/>
+	</plugin_action>
+	<plugin_action 
 		documentation="Insert 'week number' nodes under the currently select node" 
 		name="Insert week numbers" base="freemind.extensions.ModeControllerHookAdapter" 
 		label="plugins/MyPlugin/insert_week_numbers" 
