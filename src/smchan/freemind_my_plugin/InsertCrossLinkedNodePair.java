@@ -10,6 +10,9 @@ import freemind.modes.MindMapNode;
 import freemind.modes.mindmapmode.MindMapController;
 import freemind.modes.mindmapmode.actions.xml.ActionPair;
 
+/**
+ * Insert a cross-linked node pair that can be undone
+ */
 public class InsertCrossLinkedNodePair extends ExportHook {
 
     public InsertCrossLinkedNodePair() {

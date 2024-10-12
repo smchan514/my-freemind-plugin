@@ -11,7 +11,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -56,13 +55,13 @@ public class SimpleTextDialog extends JDialog {
         GridBagConstraints gbc;
         JComponent comp;
 
-        gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = DEFAULT_INSETS;
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        comp = new JLabel("Stats of selected node(s):");
+//        gbc = new GridBagConstraints();
+//        gbc.anchor = GridBagConstraints.WEST;
+//        gbc.insets = DEFAULT_INSETS;
+//        gbc.gridwidth = GridBagConstraints.REMAINDER;
+//        comp = new JLabel("Stats of selected node(s):");
+//        panel.add(comp, gbc);
 
-        panel.add(comp, gbc);
         gbc = new GridBagConstraints();
         gbc.insets = DEFAULT_INSETS;
         gbc.fill = GridBagConstraints.BOTH;

@@ -133,6 +133,15 @@
 		<plugin_menu location="menu_bar/view/show_nodes_stats"/>
 	</plugin_action>
 	<plugin_action 
+		documentation="Show node path" 
+		name="Show node path"
+        base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/show_node_path" 
+		class_name="smchan.freemind_my_plugin.ShowNodePath">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/view/show_node_path"/>
+	</plugin_action>
+	<plugin_action 
 		documentation="Edit encrypted attribute" 
 		name="Edit encrypted attribute"
         base="freemind.extensions.ModeControllerHookAdapter" 

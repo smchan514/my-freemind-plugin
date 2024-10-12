@@ -18,6 +18,7 @@ Added "plugin actions":
 |Insert random string                                        | N/A               |
 |Insert 'week number' nodes                                  | N/A               |
 |Show nodes stats                                            | N/A               |
+|Show node path                                              | N/A               |
 
 Notes:
 1. On the "encrypted attribute" feature:
