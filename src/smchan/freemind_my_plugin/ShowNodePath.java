@@ -23,8 +23,8 @@ public class ShowNodePath extends ModeControllerHookAdapter {
         // Check for the preconditions
         List<?> selected = getController().getSelecteds();
         if (selected == null || selected.size() != 1) {
-            JOptionPane.showMessageDialog(getController().getView(), "Preconditions not met: get one node selected",
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(getController().getFrame().getJFrame(),
+                    "Preconditions not met: get one node selected", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 

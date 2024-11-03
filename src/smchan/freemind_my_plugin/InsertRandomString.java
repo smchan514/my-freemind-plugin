@@ -83,7 +83,7 @@ public class InsertRandomString extends ExportHook implements ClipboardOwner {
             }
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(getController().getView(), e.getMessage(), "Error",
+            JOptionPane.showMessageDialog(getController().getFrame().getJFrame(), e.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }

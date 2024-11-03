@@ -27,8 +27,8 @@ public class ReserializeEncryptedAttributes extends ModeControllerHookAdapter {
 
         List<?> list = getController().getSelecteds();
         if (list == null || list.size() != 1) {
-            JOptionPane.showMessageDialog(getController().getView(), "Preconditions not met: get one node selected",
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(getController().getFrame().getJFrame(),
+                    "Preconditions not met: get one node selected", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 

@@ -84,7 +84,7 @@ public class ToggleWordCases extends ExportHook {
             // Determine the current case using the first selected ode
             currCase = getCurrentWordCase((MindMapNode) selected.get(0));
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(getController().getView(), e.getMessage(), "Error",
+            JOptionPane.showMessageDialog(getController().getFrame().getJFrame(), e.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
             return;
         }

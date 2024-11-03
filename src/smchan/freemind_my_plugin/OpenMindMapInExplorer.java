@@ -20,7 +20,7 @@ public class OpenMindMapInExplorer extends ExportHook {
 
         File file = getController().getMap().getFile();
         if (file == null) {
-            JOptionPane.showMessageDialog(getController().getView(),
+            JOptionPane.showMessageDialog(getController().getFrame().getJFrame(),
                     "Unable to get mindmap file name (probably not saved yet?)", "Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -34,8 +34,8 @@ public class OpenMindMapInExplorer extends ExportHook {
             // Not sure if we need to wait for explorer to return...
             // proc.waitFor();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(getController().getView(), "Failed to open explorer " + e.getMessage(),
-                    "Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(getController().getFrame().getJFrame(),
+                    "Failed to open explorer " + e.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
         }
     }
 

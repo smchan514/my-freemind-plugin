@@ -37,7 +37,7 @@ public class PutMindMapNameInClipboard extends ExportHook implements ClipboardOw
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, this);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(getController().getView(), e.getMessage(), "Error",
+            JOptionPane.showMessageDialog(getController().getFrame().getJFrame(), e.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }

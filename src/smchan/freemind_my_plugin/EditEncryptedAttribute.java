@@ -42,8 +42,8 @@ public class EditEncryptedAttribute extends ModeControllerHookAdapter {
         // Check for the preconditions
         List<?> selected = getController().getSelecteds();
         if (selected == null || selected.size() != 1) {
-            JOptionPane.showMessageDialog(getController().getView(), "Preconditions not met: get one node selected",
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(getController().getFrame().getJFrame(),
+                    "Preconditions not met: get one node selected", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -63,7 +63,7 @@ public class EditEncryptedAttribute extends ModeControllerHookAdapter {
             return;
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Uncaught exception", e);
-            JOptionPane.showMessageDialog(getController().getView(),
+            JOptionPane.showMessageDialog(getController().getFrame().getJFrame(),
                     "Failed to get default secret key in keystore:\n\n" + e.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
             return;
@@ -79,7 +79,7 @@ public class EditEncryptedAttribute extends ModeControllerHookAdapter {
                 // Failed to decrypt current value, ask the user what to do
                 LOGGER.log(Level.WARNING, "Uncaught exception", e);
 
-                int opt = JOptionPane.showConfirmDialog(getController().getView(),
+                int opt = JOptionPane.showConfirmDialog(getController().getFrame().getJFrame(),
                         "Failed to decrypt existing value!\nProceed to edit by discarding current value?\n\nError: "
                                 + e.getMessage(),
                         "Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -122,8 +122,8 @@ public class EditEncryptedAttribute extends ModeControllerHookAdapter {
 
                     @Override
                     public void split(String newText, int position) {
-                        JOptionPane.showMessageDialog(getController().getView(), "Split not supported", "Error",
-                                JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(getController().getFrame().getJFrame(), "Split not supported",
+                                "Error", JOptionPane.ERROR_MESSAGE);
                         cancel();
                     }
                 });
@@ -145,7 +145,7 @@ public class EditEncryptedAttribute extends ModeControllerHookAdapter {
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Uncaught exception", e);
 
-            JOptionPane.showMessageDialog(getController().getView(),
+            JOptionPane.showMessageDialog(getController().getFrame().getJFrame(),
                     "Failed to encrypt value! The attribute value will be lost!", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -167,7 +167,7 @@ public class EditEncryptedAttribute extends ModeControllerHookAdapter {
             String value = mmc.getController().getProperty(PROP_NAME_ENCRYPT_ATTR_DISBALE_MSG_NO_AUTO_RESET);
             if (value == null || value.length() == 0) {
                 mmc.getController().setProperty(PROP_NAME_ENCRYPT_ATTR_DISBALE_MSG_NO_AUTO_RESET, "true");
-                JOptionPane.showMessageDialog(getController().getView(),
+                JOptionPane.showMessageDialog(getController().getFrame().getJFrame(),
                         "Failed to register desktop screen event to reset encryption secrets on user lock screen.\n"
                                 + "Use JRE 9 or later to leverage this feature",
                         "Warning", JOptionPane.WARNING_MESSAGE);
