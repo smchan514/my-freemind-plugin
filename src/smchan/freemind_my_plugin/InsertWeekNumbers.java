@@ -3,9 +3,8 @@ package smchan.freemind_my_plugin;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
-
-import javax.swing.JOptionPane;
 
 import freemind.controller.actions.generated.instance.CompoundAction;
 import freemind.controller.actions.generated.instance.DeleteNodeAction;
@@ -46,20 +45,22 @@ public class InsertWeekNumbers extends ExportHook {
             performInit();
         }
 
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int firstWeek = 1;
+        // Get user input from a modal dialog
+        InsertWeekNumbersDialog dialog = new InsertWeekNumbersDialog();
 
-        String str = JOptionPane.showInputDialog("Calendar Year?", Integer.toString(year));
-        year = Integer.parseInt(str);
+        // Skip the rest if the user cancels
+        if (!dialog.showDialog()) {
+            return;
+        }
 
-        str = JOptionPane.showInputDialog("First week?", Integer.toString(firstWeek));
-        firstWeek = Integer.parseInt(str);
+        int year = dialog.getYear();
+        int firstWeek = dialog.getFirstWeek();
+        boolean separateByQuarters = dialog.getSeparateByQuarters();
 
-        String[] nodeTexts = generateNodeTexts(year, firstWeek);
+        WeekModel[] weekModels = generateWeekModels(year, firstWeek);
 
         // Add new nodes (with undo in one step)
-        addNewNodes(nodeTexts);
+        addNewNodes(weekModels, separateByQuarters);
     }
 
     private void performInit() {
@@ -72,34 +73,69 @@ public class InsertWeekNumbers extends ExportHook {
         _initialized = true;
     }
 
-    private void addNewNodes(String[] nodeTexts) {
+    private void addNewNodes(WeekModel[] nodeModels, boolean separateByQuarters) {
+        // Keep track of the parent nodes
+        HashMap<String, ParentNodeInfo> mapParents = new HashMap<>();
+
+        // Insert the node selected in the mind map as the "root" node
         MindMapController mmc = (MindMapController) getController();
-        MindMapNode parent = mmc.getSelected();
-        String parentNodeId = mmc.getNodeID(parent);
-        int insertIndex = parent.getChildCount();
+        MindMapNode rootNode = mmc.getSelected();
+        String rootNodeId = mmc.getNodeID(rootNode);
+        int rootInsertIndex = rootNode.getChildCount();
+        mapParents.put("root", new ParentNodeInfo(rootNodeId, rootInsertIndex));
 
         // Create compound DO and UNDO actions
         CompoundAction doActions = new CompoundAction();
         CompoundAction undoActions = new CompoundAction();
 
-        // For all the node nodes to create...
-        for (int i = 0; i < nodeTexts.length; i++) {
-            String nodeText = nodeTexts[i];
-            String newNodeId = mmc.getModel().getLinkRegistry().generateUniqueID(null);
+        if (separateByQuarters) {
+            // Insert the quarter nodes...
+            String lastQuarter = null;
+            for (int i = 0; i < nodeModels.length; i++) {
+                String thisQuarter = nodeModels[i]._textQuarter;
+                if (lastQuarter == null || !lastQuarter.equals(thisQuarter)) {
+                    String newNodeId = createActions(mmc, doActions, undoActions, rootNodeId, rootInsertIndex++,
+                            thisQuarter);
 
-            // Add to the compound DO action: create a new node and set the node text
-            doActions.addChoice(createNewNodeAction(parentNodeId, insertIndex + i, newNodeId, nodeText));
-            doActions.addChoice(createEditNodeAction(newNodeId, nodeText));
+                    // Create a new "parent node" for all the weeks in this quarter
+                    mapParents.put(thisQuarter, new ParentNodeInfo(newNodeId, 0));
+                    lastQuarter = thisQuarter;
+                }
+            }
+        }
 
-            // Add to the compound UNDO action: delete the new node using its node Id
-            undoActions.addChoice(createDeleteNodeAction(newNodeId));
+        // For all the week nodes to create...
+        ParentNodeInfo parent = mapParents.get("root");
+        for (int i = 0; i < nodeModels.length; i++) {
+            WeekModel weekModel = nodeModels[i];
+
+            if (separateByQuarters) {
+                parent = mapParents.get(weekModel._textQuarter);
+                assert (parent != null);
+            }
+
+            createActions(mmc, doActions, undoActions, parent._nodeId, parent._insertIndex++, weekModel._textWeek);
         }
 
         // Execute the transaction
         mmc.doTransaction("Insert weeks", new ActionPair(doActions, undoActions));
     }
 
-    private NewNodeAction createNewNodeAction(String parentNodeId, int index, String newId, String nodeText) {
+    private String createActions(MindMapController mmc, CompoundAction doActions, CompoundAction undoActions,
+            String parentNodeId, int insertIndex, String nodeLabel) {
+        String newNodeId = mmc.getModel().getLinkRegistry().generateUniqueID(null);
+
+        // Add to the compound DO action: create a new node and set the node text
+        doActions.addChoice(createNewNodeAction(parentNodeId, insertIndex, newNodeId));
+        doActions.addChoice(createEditNodeAction(newNodeId, nodeLabel));
+
+        // Add to the compound UNDO action: delete the new node using its node Id
+        // At at zero so the last added node is deleted first
+        undoActions.addAtChoice(0, createDeleteNodeAction(newNodeId));
+        return newNodeId;
+    }
+
+    private NewNodeAction createNewNodeAction(String parentNodeId, int index, String newId) {
         NewNodeAction newNodeAction = new NewNodeAction();
         newNodeAction.setNode(parentNodeId);
         newNodeAction.setPosition("right");
@@ -121,8 +157,8 @@ public class InsertWeekNumbers extends ExportHook {
         return deleteAction;
     }
 
-    private String[] generateNodeTexts(int year, int firstWeek) {
-        LinkedList<String> lst = new LinkedList<>();
+    private WeekModel[] generateWeekModels(int year, int firstWeek) {
+        LinkedList<WeekModel> lst = new LinkedList<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar cal = Calendar.getInstance();
 
@@ -135,17 +171,77 @@ public class InsertWeekNumbers extends ExportHook {
 
         LOGGER.info("startdate=" + startdate);
 
+        // Get the week number: starts at 1
+        int thisWeek = cal.get(Calendar.WEEK_OF_YEAR);
+        int lastWeek = 0;
+
         do {
-            // Insert the week number label
-            int week = cal.get(Calendar.WEEK_OF_YEAR);
+            int quarter = getQauter(thisWeek);
+
+            // Get the first day of the week
             Date date = cal.getTime();
-            lst.add(String.format("[%s] wk%02d", sdf.format(date), week));
+
+            // Insert the node texts
+            String textWeek = String.format("[%s] wk%02d", sdf.format(date), thisWeek);
+            String textQuarter = String.format("Q%d", quarter);
+            lst.add(new WeekModel(textQuarter, textWeek));
 
             // Move up 7 days
             cal.add(Calendar.DAY_OF_MONTH, 7);
-        } while (cal.get(Calendar.YEAR) <= year);
 
-        return lst.toArray(new String[0]);
+            lastWeek = thisWeek;
+            thisWeek = cal.get(Calendar.WEEK_OF_YEAR);
+        } while (cal.get(Calendar.YEAR) <= year && thisWeek > lastWeek);
+
+        return lst.toArray(new WeekModel[0]);
+    }
+
+    /**
+     * Compute the corresponding quarter number: 13 weeks per quarter, last quarter
+     * may have 14 weeks
+     * 
+     * @param week week number, starting at 1
+     * @return quarter number, starting at 1
+     */
+    private int getQauter(int week) {
+        assert (week > 0);
+        assert (week <= 53);
+
+        if (week <= 13) {
+            return 1;
+        }
+
+        if (week <= 26) {
+            return 2;
+        }
+
+        if (week <= 39) {
+            return 3;
+        }
+
+        return 4;
+    }
+
+    //////////////////////////////////////////////
+    private static class WeekModel {
+        public final String _textQuarter;
+        public final String _textWeek;
+
+        public WeekModel(String textQuarter, String textWeek) {
+            _textQuarter = textQuarter;
+            _textWeek = textWeek;
+        }
+    }
+
+    //////////////////////////////////////////////
+    private static class ParentNodeInfo {
+        public String _nodeId;
+        public int _insertIndex;
+
+        public ParentNodeInfo(String nodeId, int insertIndex) {
+            _nodeId = nodeId;
+            _insertIndex = insertIndex;
+        }
     }
 
 }
