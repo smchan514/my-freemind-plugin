@@ -7,4 +7,9 @@
     selected node" on mouse click over a blank area in the mind map.
     This avoids the unexpected jumpiness when navigating in a map.
 
+[2024-11-24]
+    Modified freemind.modes.mindmapmode.actions.ToggleFoldedAction to indicate
+    map change when "resources_save_folding_state=false" in auto.properties so
+    that FreeMind will allow the map to be saved 
+
 #EOF

@@ -54,7 +54,8 @@ public class ToggleFoldedAction extends AbstractAction implements ActorXml {
 		logger = modeController.getFrame().getLogger(this.getClass().getName());
 	}
 
-	public void actionPerformed(ActionEvent e) {
+	@Override
+    public void actionPerformed(ActionEvent e) {
 		toggleFolded();
 	}
 
@@ -122,7 +123,8 @@ public class ToggleFoldedAction extends AbstractAction implements ActorXml {
 		return foldAction;
 	}
 
-	public void act(XmlAction action) {
+	@Override
+    public void act(XmlAction action) {
 		if (action instanceof FoldAction) {
 			FoldAction foldAction = (FoldAction) action;
 			MindMapNode node = modeController.getNodeFromID(foldAction
@@ -132,11 +134,20 @@ public class ToggleFoldedAction extends AbstractAction implements ActorXml {
 			if (Resources.getInstance().getBoolProperty(
 					FreeMind.RESOURCES_SAVE_FOLDING_STATE)) {
 				modeController.nodeChanged(node);
+            } else {
+                // [SMC 2024-11-24]
+                // When the specified resource is "false", changing node folding status
+                // won't contribute to "node model change", so its "modified" timestamp
+                // won't be updated. This is good to reduce noise on the timestamp
+                // But, we still want to tell the map that it has been modified
+                // so that FreeMind will allow the map to be saved.
+                modeController.getMap().setSaved(false);
 			}
 		}
 	}
 
-	public Class getDoActionClass() {
+	@Override
+    public Class getDoActionClass() {
 		return FoldAction.class;
 	}
 
