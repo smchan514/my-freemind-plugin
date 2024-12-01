@@ -287,6 +287,8 @@ public class NodeHistory extends MindMapNodeHookAdapter {
 				NodeView nodeView = c.getNodeView(toBeSelected);
 				if (nodeView != null) {
 					c.select(nodeView);
+                    // [2024-12-01 SMCHAN] Center destination node
+                    c.centerNode(toBeSelected);
 					sPreventRegistration = false;
 				}
 			}

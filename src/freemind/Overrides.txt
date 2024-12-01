@@ -26,4 +26,8 @@
     undesirable side effects, e.g. FreeMind is unable to detect if another
     FreeMind instance is running, leading to concurrent modifications to maps.
 
+[2024-12-01]
+    Modified accessories.plugins.NodeHistory to center destination node after
+    a 'back' or 'forward' navigation action.
+
 #EOF
