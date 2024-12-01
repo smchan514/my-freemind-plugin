@@ -12,4 +12,7 @@
     map change when "resources_save_folding_state=false" in auto.properties so
     that FreeMind will allow the map to be saved 
 
+[2024-12-01]
+    Provide optional support for FlatLaf look and feels (including FlatDarkLaf)
+
 #EOF

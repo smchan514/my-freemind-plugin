@@ -40,6 +40,49 @@ Notes:
     1. `C:\Program Files (x86)\FreeMind\myplugin\myplugin.jar`
     2. `C:\Program Files (x86)\FreeMind\MyPlugin.xml`
 
+
+## How to Enable Dark Theme
+
+1. Assuming the following:
+    1. You have compiled the "Freemind override" classes under `src/freemind` and packaged the compiled classes in a Jar.
+    2. You have downloaded `com.formdev.flatlag` (version 3.5.2 referenced here).
+2. Put the following Jar files under the "lib" folder in your installed instance of Freemind:
+    1. "Freemind override" Jar
+    2. FlatLaf Jar
+3. Put the batch file `freemind.bat` in your installed instance of Freemind, edit it as follows:
+    1. Uncomment (remove the REM prefix) the SET statements under "Optional support for FlatLaf"
+    2. Update as required the Jar names in the `SET CLASSPATH` statement
+4. Update the Freemind icon on your desk to start Freemind with the batch file
+5. Start Freemind and modify Preferences via menu item Tools / Preferences, with suggested values below:
+    1. Under tab "Appearance":
+        1. Under section "Look and Feel":
+            1. For "Look and Feel", select "FlatLaf Dark"
+        1. Under section "Section "Selection Colors":
+            1. For "Selected Node Bubble Color":
+                1. Dark theme: `#002080`
+                2. Light theme: `#002080`
+            2. For "Standard Selected Node Color":
+                1. Dark theme: `#333333`
+                2. Light theme: `#D2D2D2`
+    2. Under tab "Defaults", under section Section "Default Colors"
+        1. For "Standard Node Color" (node text color):
+            1. Dark theme: `#808080`
+            2. Light theme: `#000000`
+        2. For "Standard Edge Color":
+            1. Dark theme: `#808080`
+            2. Light theme: `#808080`
+        3. For "Standard Link Color":
+            1. Dark theme: `#b0b0b0`
+            2. Light theme: `#b0b0b0`
+        4. For "Standard Background Color":
+            1. Dark theme: `#000000`
+            2. Light theme: `#ffffff`
+        5. For "Standard Cloud Color":
+            1. Dark theme: `#f0f0f0`
+            2. Light theme: `#f0f0f0`
+5. Restart Freemind for the L&F settings to take effect.
+
+
 ## TODO
 
 1. Create automated build
