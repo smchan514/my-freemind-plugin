@@ -45,7 +45,8 @@ Notes:
 
 1. Assuming the following:
     1. You have compiled the "Freemind override" classes under `src/freemind` and packaged the compiled classes in a Jar.
-    2. You have downloaded `com.formdev.flatlag` (version 3.5.2 referenced here).
+    2. You have downloaded `com.formdev.flatlaf` (version 3.5.2 referenced here).
+        1. https://mvnrepository.com/artifact/com.formdev/flatlaf/3.5.2
 2. Put the following Jar files under the "lib" folder in your installed instance of Freemind:
     1. "Freemind override" Jar
     2. FlatLaf Jar
