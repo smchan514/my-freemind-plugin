@@ -142,6 +142,12 @@ public class ToggleFoldedAction extends AbstractAction implements ActorXml {
                 // But, we still want to tell the map that it has been modified
                 // so that FreeMind will allow the map to be saved.
                 modeController.getMap().setSaved(false);
+
+                // [SMC 2024-12-05]
+                // Additionally, signal nodeRefresh (instead of nodeChanged) so that all
+                // the node hooks are notified via another override in ControllerAdapter.
+                // All this for hierarchical icon display...
+                modeController.nodeRefresh(node);
 			}
 		}
 	}

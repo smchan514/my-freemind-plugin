@@ -190,9 +190,16 @@ public abstract class ControllerAdapter implements ModeController,
 			if (node.getHistoryInformation() != null) {
 				node.getHistoryInformation().setLastModifiedAt(new Date());
 			}
+            // [SMC 2024-12-05] Moved...
 			// Tell any node hooks that the node is changed:
-			updateNode(node);
+            // updateNode(node);
 		}
+
+        // [SMC 2024-12-05] Moved the call to updateNode() out of if(isUpdate)
+        // so that hierarchical icon display can be updated corrected when
+        // folding / unfolding a node
+        updateNode(node);
+
 		// fc, 10.10.06: Dirty hack in order to keep this method away from being
 		// used by everybody.
 		((MapAdapter) getMap()).nodeChangedInternal(node);

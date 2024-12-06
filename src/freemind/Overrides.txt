@@ -30,4 +30,10 @@
     Modified accessories.plugins.NodeHistory to center destination node after
     a 'back' or 'forward' navigation action.
 
+[2024-12-05]
+    Following up to changes in 2024-11-24, modified the following classes to
+    trigger hierarchical icon display updates when nodes are folded: 
+      - freemind.modes.ControllerAdapter
+      - freemind.modes.mindmapmode.actions.ToggleFoldedAction
+
 #EOF
