@@ -36,4 +36,9 @@
       - freemind.modes.ControllerAdapter
       - freemind.modes.mindmapmode.actions.ToggleFoldedAction
 
+[2024-12-12]
+    Related to changes in 2024-12-05, modified
+    accessories.plugins.HierarchicalIcons to reduce delay when closing a mind
+    map or Freemind
+
 #EOF

@@ -38,22 +38,26 @@ public class HierarchicalIcons extends PermanentMindMapNodeHookAdapter
 
 	@Override
     public void shutdownMapHook() {
-		// remove all icons:
-		MindMapNode root = getMindMapController().getRootNode();
-		removeIcons(root);
+        // [2024-12-12] It is unclear why it is necessary to remove all icons...
+        // The recursive calls to removeIcons() are adding unnecessary delay
+        // when closing a mind map or Freemind.
+
+        // remove all icons:
+//		MindMapNode root = getMindMapController().getRootNode();
+//		removeIcons(root);
 		super.shutdownMapHook();
 	}
 
 	/**
      */
-	private void removeIcons(MindMapNode node) {
-		node.setStateIcon(getName(), null);
-		getMindMapController().nodeRefresh(node);
-		for (Iterator i = node.childrenUnfolded(); i.hasNext();) {
-			MindMapNode child = (MindMapNode) i.next();
-			removeIcons(child);
-		}
-	}
+//	private void removeIcons(MindMapNode node) {
+//		node.setStateIcon(getName(), null);
+//		getMindMapController().nodeRefresh(node);
+//		for (Iterator i = node.childrenUnfolded(); i.hasNext();) {
+//			MindMapNode child = (MindMapNode) i.next();
+//			removeIcons(child);
+//		}
+//	}
 
 	/**
      *
