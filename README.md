@@ -13,6 +13,7 @@ Added "plugin actions":
 |Insert cross-linked node pair                               | CTRL+SHIFT+L      |
 |Show the most recently used nodes in a dialog               | CTRL+M            |
 |Toggle word cases: "UPPER CASE", "lower case", "Title Case" | SHIFT+F3          |
+|Normalize white space in node text                          | CTRL+SHIFT+F3     |
 |Edit encrypted attribute `__ENC__` of the selected node     | SHIFT+F2          |
 |Reset encryption (clear cache of secrets)                   | N/A               |
 |Insert random string                                        | N/A               |

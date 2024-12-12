@@ -123,6 +123,16 @@
 		<plugin_menu location="menu_bar/format/toggle_word_cases"/>
 		<plugin_property name="minor_words" value="and as but for if nor or or so yet a an the at by in of per to via de du des à au aux le la les dans sous sur"/>
 	</plugin_action>
+    <plugin_action 
+        documentation="Normalize white space" 
+        name="Normalize white space"
+        base="freemind.extensions.ModeControllerHookAdapter" 
+        label="plugins/MyPlugin/normalize_white_space" 
+        key_stroke="ctrl shift F3"
+        class_name="smchan.freemind_my_plugin.NormalizeWhiteSpace">
+        <plugin_mode class_name="freemind.modes.mindmapmode"/>
+        <plugin_menu location="menu_bar/format/normalize_white_space"/>
+    </plugin_action>
 	<plugin_action 
 		documentation="Show stats of selected nodes" 
 		name="Show nodes stats"
@@ -168,16 +178,6 @@
 		class_name="smchan.freemind_my_plugin.encrypted_attr.ReserializeEncryptedAttributes">
 		<plugin_mode class_name="freemind.modes.mindmapmode"/>
 		<plugin_menu location="menu_bar/view/repackage_encrypted_attr"/>
-	</plugin_action>
-	<plugin_action 
-		documentation="Normalize white space" 
-		name="Normalize white space"
-        base="freemind.extensions.ModeControllerHookAdapter" 
-		label="plugins/MyPlugin/normalize_white_space" 
-        key_stroke="ctrl shift F3"
-		class_name="smchan.freemind_my_plugin.NormalizeWhiteSpace">
-		<plugin_mode class_name="freemind.modes.mindmapmode"/>
-		<plugin_menu location="menu_bar/view/normalize_white_space"/>
 	</plugin_action>
     <!-- 
 	<plugin_action 
