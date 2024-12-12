@@ -193,7 +193,7 @@ public class ToggleWordCases extends ExportHook {
     }
 
     private String changeNodeTextToTitleCase(String nodeText) {
-        String[] parts = nodeText.split(REGEX_WHITESPACES);
+        String[] parts = nodeText.trim().split(REGEX_WHITESPACES);
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < parts.length; i++) {

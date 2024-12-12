@@ -169,6 +169,16 @@
 		<plugin_mode class_name="freemind.modes.mindmapmode"/>
 		<plugin_menu location="menu_bar/view/repackage_encrypted_attr"/>
 	</plugin_action>
+	<plugin_action 
+		documentation="Normalize white space" 
+		name="Normalize white space"
+        base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/normalize_white_space" 
+        key_stroke="ctrl shift F3"
+		class_name="smchan.freemind_my_plugin.NormalizeWhiteSpace">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/view/normalize_white_space"/>
+	</plugin_action>
     <!-- 
 	<plugin_action 
 		documentation="Advanced search (prototype)" 
