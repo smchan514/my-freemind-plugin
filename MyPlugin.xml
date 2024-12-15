@@ -179,6 +179,15 @@
 		<plugin_mode class_name="freemind.modes.mindmapmode"/>
 		<plugin_menu location="menu_bar/view/repackage_encrypted_attr"/>
 	</plugin_action>
+	<plugin_action 
+		documentation="Go to a user-specified node ID" 
+		name="Go to node ID"
+        base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/goto_node_id" 
+		class_name="smchan.freemind_my_plugin.GoToNodeId">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/view/goto_node_id"/>
+	</plugin_action>
     <!-- 
 	<plugin_action 
 		documentation="Advanced search (prototype)" 

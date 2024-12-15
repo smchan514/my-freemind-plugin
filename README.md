@@ -20,6 +20,7 @@ Added "plugin actions":
 |Insert 'week number' nodes                                  | N/A               |
 |Show nodes stats                                            | N/A               |
 |Show node path                                              | N/A               |
+|Go to node ID                                               | N/A               |
 
 Notes:
 1. On the "encrypted attribute" feature:
