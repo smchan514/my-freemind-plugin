@@ -23,7 +23,8 @@ public class NormalizeWhiteSpace extends ExportHook {
             .getLogger(NormalizeWhiteSpace.class.getName());
 
     // Regex used to split a list of words separated by at least one whitespace
-    private static final String REGEX_WHITESPACES = "\\s+";
+    // Use \p{Z} to match Unicode whitespace, including &nbsp;
+    private static final String REGEX_WHITESPACES = "\\p{Z}+";
 
     public NormalizeWhiteSpace() {
         // ...
