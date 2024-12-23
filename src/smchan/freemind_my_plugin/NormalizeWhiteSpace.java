@@ -24,7 +24,7 @@ public class NormalizeWhiteSpace extends ExportHook {
 
     // Regex used to split a list of words separated by at least one whitespace
     // Use \p{Z} to match Unicode whitespace, including &nbsp;
-    private static final String REGEX_WHITESPACES = "\\p{Z}+";
+    private static final String REGEX_WHITESPACES = "(\\p{Z}|\\s)+";
 
     public NormalizeWhiteSpace() {
         // ...

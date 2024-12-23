@@ -32,7 +32,7 @@ public class ToggleWordCases extends ExportHook {
     private static final String RES_KEY_MINOR_WORDS = "minor_words";
 
     // Regex used to split a list of words separated by at least one whitespace
-    private static final String REGEX_WHITESPACES = "\\s+";
+    private static final String REGEX_WHITESPACES = "(\\p{Z}|\\s)+";
 
     private enum WordCase {
         ALL_UPPER_CASE,
