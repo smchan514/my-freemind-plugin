@@ -14,18 +14,22 @@ Added "plugin actions":
 |Show the most recently used nodes in a dialog               | CTRL+M            |
 |Toggle word cases: "UPPER CASE", "lower case", "Title Case" | SHIFT+F3          |
 |Normalize white space in node text                          | CTRL+SHIFT+F3     |
-|Edit encrypted attribute `__ENC__` of the selected node     | SHIFT+F2          |
+|Edit encrypted attribute `__ENC__` of the selected node<sup>(1)</sup> | SHIFT+F2          |
 |Reset encryption (clear cache of secrets)                   | N/A               |
 |Insert random string                                        | N/A               |
 |Insert 'week number' nodes                                  | N/A               |
 |Show nodes stats                                            | N/A               |
 |Show node path                                              | N/A               |
 |Go to node ID                                               | N/A               |
+|Advanced search<sup>(2)</sup>                               | CTRL+SHIFT+F      |
 
 Notes:
 1. On the "encrypted attribute" feature:
     1. Use OpenJDK or Amazon Corretto JRE/JDK to enable use of AES-256.
     2. Use JRE/JDK 9 or later to enable auto reset on user lock screen (Tested with Amazon Corretto JDK 11.0.24.8.1).
+1. The keyboard shortcut for "Advanced search" may clash with the existing for "Search and replace" in baseline Freemind, to disable the latter:
+    1. Locate the user config file `C:\Users\%USERNAME%\.freemind\auto.properties` 
+    2. Insert the following in a new line: `keystroke_plugins/TimeList.xml_key=invalid`
 
 ## How to compile and deploy manually
 

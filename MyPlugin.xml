@@ -188,15 +188,23 @@
 		<plugin_mode class_name="freemind.modes.mindmapmode"/>
 		<plugin_menu location="menu_bar/view/goto_node_id"/>
 	</plugin_action>
-    <!-- 
 	<plugin_action 
-		documentation="Advanced search (prototype)" 
-		name="Advanced search"
+		documentation="Go to a user-specified node path" 
+		name="Go to node at path"
         base="freemind.extensions.ModeControllerHookAdapter" 
-		label="plugins/MyPlugin/show_mru_nodes" 
-		class_name="smchan.freemind_my_plugin.AdvancedSearch">
+		label="plugins/MyPlugin/goto_node_at_path" 
+		class_name="smchan.freemind_my_plugin.GoToNodeAtPath">
 		<plugin_mode class_name="freemind.modes.mindmapmode"/>
-		<plugin_menu location="menu_bar/view/advanced_search"/>
+		<plugin_menu location="menu_bar/view/goto_node_at_path"/>
 	</plugin_action>
-     -->
+    <plugin_action 
+        documentation="Advanced search v1" 
+        name="Advanced search"
+        base="freemind.extensions.ModeControllerHookAdapter" 
+        label="plugins/MyPlugin/advanced_search" 
+        key_stroke="ctrl shift F"
+        class_name="smchan.freemind_my_plugin.adv_search.AdvancedSearch">
+        <plugin_mode class_name="freemind.modes.mindmapmode"/>
+        <plugin_menu location="menu_bar/edit/advanced_search"/>
+    </plugin_action>
 </plugin>

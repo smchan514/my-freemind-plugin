@@ -36,7 +36,7 @@ public class ShowSelectedNodesStats extends ModeControllerHookAdapter {
         sb.append('\n');
         sb.append("- Level 1 children count: " + stats.level1ChildrenCount);
         sb.append('\n');
-        sb.append("- level 2 children count: " + stats.level2ChildrenCount);
+        sb.append("- Level 2 children count: " + stats.level2ChildrenCount);
         sb.append('\n');
         sb.append("- Total children count: " + stats.totalChildrenCount);
         sb.append('\n');

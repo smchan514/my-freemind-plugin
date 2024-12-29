@@ -30,10 +30,10 @@ public class ShowNodePath extends ModeControllerHookAdapter {
 
         // Get the path to the selected node
         MindMapNode node = (MindMapNode) selected.get(0);
+        NodePath nodePath = NodePathUtil.getNodePath(node);
         LinkedList<String> path = new LinkedList<>();
 
         // Iterate until we hit the root node
-        node = node.getParentNode();
         while (node != null) {
             // Get plain text to avoid HTML
             path.addFirst(node.getPlainTextContent());
@@ -41,7 +41,7 @@ public class ShowNodePath extends ModeControllerHookAdapter {
         }
 
         // Show path in GUI
-        SimpleTextDialog dialog = new SimpleTextDialog("Node Path", renderPath(path));
+        SimpleTextDialog dialog = new SimpleTextDialog("Node Path", nodePath + "\n\n" + renderPath(path));
         dialog.setVisible(true);
     }
 
