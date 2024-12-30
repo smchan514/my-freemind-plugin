@@ -21,6 +21,7 @@ Added "plugin actions":
 |Show nodes stats                                            | N/A               |
 |Show node path                                              | N/A               |
 |Go to node ID                                               | N/A               |
+|Go to node at path                                          | N/A               |
 |Advanced search<sup>(2)</sup>                               | CTRL+SHIFT+F      |
 
 Notes:
