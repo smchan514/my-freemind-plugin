@@ -40,7 +40,8 @@ class AdvancedSearchResultsFrame extends JFrame {
     private static final long serialVersionUID = 1L;
     private static final Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
     private JTextField _jtfSearchTerm;
-    private JTextField _jtfCount;
+    private JLabel _jlFinalCount;
+    private JLabel _jlTotalCount;
     private SearchResultsListModel _listModel;
     private JList<SearchResult> _jlist;
 
@@ -48,7 +49,7 @@ class AdvancedSearchResultsFrame extends JFrame {
         initComponents();
     }
 
-    public void showSearchResults(Component owner, String searchTerm, Set<SearchResult> results) {
+    public void showSearchResults(Component owner, String searchTerm, Set<SearchResult> results, int totalCount) {
         if (!isVisible()) {
             pack();
 
@@ -67,7 +68,10 @@ class AdvancedSearchResultsFrame extends JFrame {
         // Change list content
         _listModel.setResults(results);
 
-        // Show initial search parameters..
+        // Change total count
+        _jlTotalCount.setText(Integer.toString(totalCount));
+
+        // Show initial search parameters
         _jtfSearchTerm.setText(searchTerm);
     }
 
@@ -120,9 +124,20 @@ class AdvancedSearchResultsFrame extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = DEFAULT_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
-        comp = jtf = _jtfCount = new JTextField(5);
-        jtf.setEditable(false);
-        jtf.setBorder(null);
+        comp = _jlFinalCount = new JLabel();
+        panel.add(comp, gbc);
+
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = DEFAULT_INSETS;
+        comp = new JLabel("/");
+        panel.add(comp, gbc);
+
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = DEFAULT_INSETS;
+        gbc.fill = GridBagConstraints.BOTH;
+        comp = _jlTotalCount = new JLabel();
         panel.add(comp, gbc);
 
         gbc = new GridBagConstraints();
@@ -191,7 +206,7 @@ class AdvancedSearchResultsFrame extends JFrame {
     }
 
     void doUpdateResultCount() {
-        _jtfCount.setText(Integer.toString(_listModel.getSize()));
+        _jlFinalCount.setText(Integer.toString(_listModel.getSize()));
     }
 
     void doGotoSeachResult(SearchResult searchResult) {

@@ -32,7 +32,8 @@ class AdvancedSearchDialog extends JDialog {
 
     public enum SearchScope {
         SearchEntireMindMap,
-        SearchSelectedNodes
+        SearchSelectedNodes,
+        SearchAllOpenMaps
     }
 
     public enum SearchOrientation {
@@ -56,6 +57,7 @@ class AdvancedSearchDialog extends JDialog {
     private JCheckBox _jcbCaseSensitive;
     private JRadioButton _jrbSearchEntireMap;
     private JRadioButton _jrbSearchSelectedNodes;
+    private JRadioButton _jrbSearchAllOpenMaps;
     private JRadioButton _jrbDepthFirst;
     private JRadioButton _jrbBreadthFirst;
     private JSpinField _jsfMaxResults;
@@ -285,6 +287,19 @@ class AdvancedSearchDialog extends JDialog {
         jrb.setMnemonic('F');
         panel.add(comp, gbc);
 
+        ///////////////////////
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = DEFAULT_INSETS;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        comp = _jrbSearchAllOpenMaps = jrb = new JRadioButton("All open maps",
+                _lastSearchScope == SearchScope.SearchAllOpenMaps);
+        buttonGroup.add(jrb);
+        jrb.setMnemonic('A');
+        panel.add(comp, gbc);
+
         return panel;
     }
 
@@ -321,6 +336,8 @@ class AdvancedSearchDialog extends JDialog {
             _lastSearchScope = SearchScope.SearchEntireMindMap;
         } else if (_jrbSearchSelectedNodes.isSelected()) {
             _lastSearchScope = SearchScope.SearchSelectedNodes;
+        } else if (_jrbSearchAllOpenMaps.isSelected()) {
+            _lastSearchScope = SearchScope.SearchAllOpenMaps;
         } else {
             // Default search entire map
             _lastSearchScope = SearchScope.SearchEntireMindMap;

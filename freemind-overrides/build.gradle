@@ -38,7 +38,6 @@ tasks.register("copyJars", Copy) {
     from("build/libs")
     into("build/staging/")
     include("*.jar")
-    rename('(.+).jar', '$1-' + getDate() + '.jar') 
     
     dependsOn('jar')
 }

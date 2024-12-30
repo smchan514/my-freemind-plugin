@@ -2,6 +2,7 @@ package smchan.freemind_my_plugin.adv_search;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -72,10 +73,18 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
         // Select search scope
         MindMapController mmc = (MindMapController) getController();
         MindMapNode[] nodes;
-        if (searchScope == SearchScope.SearchEntireMindMap) {
+        switch (searchScope) {
+        case SearchEntireMindMap:
             nodes = new MindMapNode[] { mmc.getRootNode() };
-        } else {
+            break;
+        case SearchSelectedNodes:
             nodes = extractSelectedNodes(mmc);
+            break;
+        case SearchAllOpenMaps:
+            nodes = extractAllRootNodes(mmc);
+            break;
+        default:
+            throw new RuntimeException("Invalid search scope");
         }
 
         // Select regex search versus simple words search
@@ -96,12 +105,14 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
         }
 
         // Perform the search!
+        int totalCount = 0;
         for (MindMapNode node : treeWalker) {
             // Compute the score for the specified node
             String text = node.getPlainTextContent();
             int score = matcher.getMatchScore(text);
             if (score > 0) {
                 results.add(new SearchResult(node, score));
+                totalCount++;
             }
 
             if (results.size() >= 2 * maxResults) {
@@ -137,7 +148,19 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
             mmc.getController().getMapModuleManager().addListener(new MyMapModuleManagerListener());
         }
 
-        _resultsFrame.showSearchResults(frame, searchTerm, results);
+        _resultsFrame.showSearchResults(frame, searchTerm, results, totalCount);
+    }
+
+    private MindMapNode[] extractAllRootNodes(MindMapController mmc) {
+        @SuppressWarnings("unchecked")
+        List<MapModule> mm = mmc.getFrame().getController().getMapModuleManager().getMapModuleVector();
+        LinkedList<MindMapNode> selected = new LinkedList<>();
+
+        for (MapModule mapModule : mm) {
+            selected.add(mapModule.getModel().getRootNode());
+        }
+
+        return selected.toArray(new MindMapNode[0]);
     }
 
     private void removeExcessResults(TreeSet<SearchResult> results, int maxResults) {
