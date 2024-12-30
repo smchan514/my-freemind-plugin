@@ -1,0 +1,44 @@
+[2023-05-04]
+    Modified freemind.main.FreeMind to restore the default security manager so
+    that security policies, if enabled at JVM start, are enforced.
+    
+[2023-12-27]
+    Modified freemind.view.mindmapview.MapView to disable "scrolling to 
+    selected node" on mouse click over a blank area in the mind map.
+    This avoids the unexpected jumpiness when navigating in a map.
+
+[2024-04-21]
+    Modified freemind.modes.mindmapmode.actions.PasteAction to skip pasting
+    image content if some other data (text, HTML, etc.) has been identified.
+    This is to avoid the unnecessary generation of an image file when 
+    pasting texts copied from Microsoft applications (Word, Excel, Outlook).
+
+[2024-11-24]
+    Modified freemind.modes.mindmapmode.actions.ToggleFoldedAction to indicate
+    map change when "resources_save_folding_state=false" in auto.properties so
+    that FreeMind will allow the map to be saved 
+
+[2024-12-01]
+    Provide optional support for FlatLaf look and feels (including FlatDarkLaf)
+
+[2024-12-01]
+    Removed modifications to freemind.main.FreeMind from [2023-05-04] due to
+    undesirable side effects, e.g. FreeMind is unable to detect if another
+    FreeMind instance is running, leading to concurrent modifications to maps.
+
+[2024-12-01]
+    Modified accessories.plugins.NodeHistory to center destination node after
+    a 'back' or 'forward' navigation action.
+
+[2024-12-05]
+    Following up to changes in 2024-11-24, modified the following classes to
+    trigger hierarchical icon display updates when nodes are folded: 
+      - freemind.modes.ControllerAdapter
+      - freemind.modes.mindmapmode.actions.ToggleFoldedAction
+
+[2024-12-12]
+    Related to changes in 2024-12-05, modified
+    accessories.plugins.HierarchicalIcons to reduce delay when closing a mind
+    map or Freemind
+
+#EOF
