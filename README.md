@@ -58,7 +58,7 @@ A working Linux environment (tested with Ubuntu 24.04.1) with the following:
 
 4. Run Gradle:
     ```
-    ./gradlew build --info
+    gradle build --info
     ```
 
 5. Locate the output Zip archives:
