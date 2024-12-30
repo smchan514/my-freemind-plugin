@@ -8,9 +8,12 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.text.View;
 
+import smchan.freemind_my_plugin.util.CompositeIcon;
+
 class SearchResultListCellRenderer implements ListCellRenderer<SearchResult> {
     private Color _altBackground;
     private final JLabel _label = new JLabel();
+    private final CompositeIcon _compositeIcon = new CompositeIcon();
 
     public SearchResultListCellRenderer() {
         _label.setOpaque(true);
@@ -35,6 +38,11 @@ class SearchResultListCellRenderer implements ListCellRenderer<SearchResult> {
             width -= 2;
             v.setSize(width, 0);
         }
+
+        // Set icons
+        _compositeIcon.setIcons(value.getNode().getIcons());
+        _compositeIcon.addIcons(value.getNode().getStateIcons().values());
+        _label.setIcon(_compositeIcon);
 
         // Set colors...
         if (isSelected) {

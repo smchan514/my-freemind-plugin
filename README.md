@@ -32,20 +32,50 @@ Notes:
     1. Locate the user config file `C:\Users\%USERNAME%\.freemind\auto.properties` 
     2. Insert the following in a new line: `keystroke_plugins/TimeList.xml_key=invalid`
 
-## How to compile and deploy manually
+## How to compile locally
 
-1. Download Freemind binaries (version 1.0.0 used)
-2. Run Eclipse (version : 2020-09 (4.17.0) used)
-3. Create Java project using JavaSE-1.8
-4. Add referenced libraries:
-    1. `freemind.jar`
-    2. `bindings.jar`
-    3. `jibx-run.jar`
-    4. `xpp3.jar`
-5. Collect compiled class files into a `myplugin.jar`
-6. Copy the following files in an installed instance of Freemind, assuming `C:\Program Files (x86)\FreeMind\`
-    1. `C:\Program Files (x86)\FreeMind\myplugin\myplugin.jar`
-    2. `C:\Program Files (x86)\FreeMind\MyPlugin.xml`
+### Setup
+
+A working Linux environment (tested with Ubuntu 24.04.1) with the following:
+
+1. Docker (tested with version 27.2.0)
+2. Git
+3. Internet connection
+
+### Steps
+
+1. Clone this repo, assuming at `~/git/my-freemind-plugin`
+2. Pull the Docker image:
+    ```
+    docker pull gradle:jdk11
+    ```
+
+3. Start a Docker container:
+    ```
+    cd ~/git/my-freemind-plugin
+    docker run --rm -it -u gradle -v $PWD:/opt/workspace -w /opt/workspace gradle:jdk11 bash
+    ```
+
+4. Run Gradle:
+    ```
+    ./gradlew build --info
+    ```
+
+5. Locate the output Zip archives:
+    1. `freemind-overrides/build/distributions/`
+    2. `myplugin/build/distributions/`
+    
+
+## How to deploy the plugin
+
+
+1. Locate the install directory of Freemind, e.g. `"C:\Users\%USERNAME%\AppData\Local\FreeMind"` or `"C:\Program Files (x86)\FreeMind"`
+2. Extract the content of the Zip file in the "plugins" directory, so you end up with the following files:
+    1. `C:\Users\%USERNAME%\AppData\Local\FreeMind\plugins\MyPlugin.xml`
+    2. `C:\Users\%USERNAME%\AppData\Local\FreeMind\plugins\myplugin\myplugin.jar`
+3. Start Freemind or restart it if it was running
+
+To test if the plugin has been installed successfully, select any node in a mind map and press F12. You should see a date stamp "[2023-09-14]" being prepended to the node.
 
 
 ## How to Enable Dark Theme

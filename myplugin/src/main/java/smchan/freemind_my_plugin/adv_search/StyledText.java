@@ -6,6 +6,8 @@ package smchan.freemind_my_plugin.adv_search;
 class StyledText {
     private static final char STYLE_HIGHLIGHT = 1;
 
+    private static final String HTML_ESCAPE_LT = "&lt;";
+
     private final char[] _text;
     private final char[] _style;
 
@@ -42,7 +44,12 @@ class StyledText {
             wasHL = isHL;
 
             // Add the character
-            sb.append(_text[i]);
+            char ch = _text[i];
+            if (ch == '<') {
+                sb.append(HTML_ESCAPE_LT);
+            } else {
+                sb.append(ch);
+            }
         }
 
         if (wasHL) {

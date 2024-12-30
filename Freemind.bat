@@ -12,7 +12,7 @@ REM Enable remote debugging
 REM SET DEBUG_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000
 
 REM Optional support for FlatLaf
-SET CLASSPATH=lib\freemind-overrides-yyyymmdd.jar;lib\flatlaf-3.5.2.jar;%CLASSPATH%
+SET CLASSPATH=lib\freemind-overrides.jar;lib\flatlaf-3.5.2.jar;%CLASSPATH%
 REM SET MAIN_CLASS=freemind.main.FreeMindPreStarter
 
 REM Start the process!

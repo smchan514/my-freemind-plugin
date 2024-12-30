@@ -3,25 +3,21 @@ package smchan.freemind_my_plugin.mru;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.border.Border;
 
 import freemind.main.Tools;
-import freemind.modes.MindIcon;
 import freemind.modes.MindMapNode;
+import smchan.freemind_my_plugin.util.CompositeIcon;
 
 /**
  * [2024-03-13] Show pinned nodes with a special border
@@ -144,59 +140,4 @@ public class MindMapNodeCellRenderer extends DefaultListCellRenderer {
         return image;
     }
 
-    //////////////////
-    private class CompositeIcon implements Icon {
-        private final LinkedList<ImageIcon> _lstIcons = new LinkedList<>();
-
-        public CompositeIcon() {
-            // ...
-        }
-
-        public void addImageIcon(ImageIcon icon) {
-            _lstIcons.add(icon);
-        }
-
-        public void setIcons(List<?> icons) {
-            _lstIcons.clear();
-
-            for (Object object : icons) {
-                if (object instanceof MindIcon) {
-                    _lstIcons.add(((MindIcon) object).getIcon());
-                }
-            }
-        }
-
-        @Override
-        public void paintIcon(Component c, Graphics g, int x, int y) {
-            for (ImageIcon icon : _lstIcons) {
-                Image img = icon.getImage();
-                g.drawImage(img, x, y, null);
-
-                x += icon.getIconWidth();
-            }
-        }
-
-        @Override
-        public int getIconWidth() {
-            int value = 0;
-
-            for (ImageIcon icon : _lstIcons) {
-                value += icon.getIconWidth();
-            }
-
-            return value;
-        }
-
-        @Override
-        public int getIconHeight() {
-            int value = 0;
-
-            for (ImageIcon icon : _lstIcons) {
-                value = Math.max(value, icon.getIconHeight());
-            }
-
-            return value;
-        }
-
-    }
 }
