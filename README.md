@@ -88,8 +88,3 @@ Notes:
             1. Dark theme: `#f0f0f0`
             2. Light theme: `#f0f0f0`
 5. Restart Freemind for the L&F settings to take effect.
-
-
-## TODO
-
-1. Create automated build
