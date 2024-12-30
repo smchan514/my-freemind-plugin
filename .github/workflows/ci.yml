@@ -1,0 +1,23 @@
+name: Build and Release
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: 11
+    - name: Build
+      run: gradle build --info
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      #if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          myplugin/build/distributions/freemind-myplugin-*.zip
+          freemind-overrides/build/distributions/freemind-overrides-*.zip
