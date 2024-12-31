@@ -28,21 +28,19 @@ class SearchResultListCellRenderer implements ListCellRenderer<SearchResult> {
         // Use the pre-rendered HTML as-is
         _label.setText(value.getHtml());
 
-        // Set JLabel width by setting the "View" javax.swing.plaf.basic.BasicHTML$Renderer
-        // which can be found through the JLabel's "client property" 
-        // This trick is found by tracing jlabel.getPreferredSize()...
+        // Set icons
+        _compositeIcon.setIcons(value.getNode().getIcons());
+        _label.setIcon(_compositeIcon);
+
+        // Set JLabel width by setting the size of the HTML "View"
+        // javax.swing.plaf.basic.BasicHTML$Renderer
+        // The view is found through the JLabel's "client property"
+        // This trick is found by tracing JLabel.getPreferredSize()...
         View v = (View) _label.getClientProperty("html");
         if (v != null) {
             int width = list.getWidth();
-            // Shave two pixels off the JList's width to avoid horizontal scroll bar
-            width -= 2;
             v.setSize(width, 0);
         }
-
-        // Set icons
-        _compositeIcon.setIcons(value.getNode().getIcons());
-        _compositeIcon.addIcons(value.getNode().getStateIcons().values());
-        _label.setIcon(_compositeIcon);
 
         // Set colors...
         if (isSelected) {

@@ -124,9 +124,9 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
             removeExcessResults(results, maxResults);
         }
 
-        // Pre-render serach results in HTML
+        // Pre-render search results in HTML
         for (SearchResult res : results) {
-            String text = res.getNodeText();
+            String text = res.getNode().getPlainTextContent();
             StyledText st = new StyledText(text);
 
             // Use the same matcher to tell use where to highilght in the text

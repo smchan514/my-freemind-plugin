@@ -169,7 +169,10 @@ class AdvancedSearchResultsFrame extends JFrame {
         JScrollPane jsp;
         comp = jsp = new JScrollPane(_jlist);
         jsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        comp.setPreferredSize(new Dimension(640, 240));
+        // Set the preferred size on the JScrollPane
+        jsp.setPreferredSize(new Dimension(640, 240));
+        // "Freeze" the JList's preferred size
+        _jlist.setPreferredSize(_jlist.getPreferredSize());
         panel.add(comp, gbc);
 
         return panel;

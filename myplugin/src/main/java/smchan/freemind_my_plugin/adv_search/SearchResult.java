@@ -30,10 +30,6 @@ class SearchResult implements Comparable<SearchResult> {
         return _node;
     }
 
-    public String getNodeText() {
-        return _node.getPlainTextContent();
-    }
-
     public float getScore() {
         return _score;
     }
