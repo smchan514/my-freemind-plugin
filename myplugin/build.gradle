@@ -19,11 +19,10 @@ dependencies {
     implementation files('../libs/freemind.jar')
 }
 
-// Apply a specific Java toolchain to ease working on different environments.
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
-    }
+compileJava {
+    // Set compatibility to Java 1.8 to avoid breaking existing installs
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
 }
 
 jar {
