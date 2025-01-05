@@ -6,7 +6,11 @@ package smchan.freemind_my_plugin.adv_search;
 class StyledText {
     private static final char STYLE_HIGHLIGHT = 1;
 
+    private static final char CHAR_LT = '<';
     private static final String HTML_ESCAPE_LT = "&lt;";
+
+    private static final char CHAR_AMP = '&';
+    private static final String HTML_ESCAPE_AMP = "&amp;";
 
     private final char[] _text;
     private final char[] _style;
@@ -45,9 +49,16 @@ class StyledText {
 
             // Add the character
             char ch = _text[i];
-            if (ch == '<') {
+
+            // Escape special HTML characters
+            switch (ch) {
+            case CHAR_LT:
                 sb.append(HTML_ESCAPE_LT);
-            } else {
+                break;
+            case CHAR_AMP:
+                sb.append(HTML_ESCAPE_AMP);
+                break;
+            default:
                 sb.append(ch);
             }
         }
