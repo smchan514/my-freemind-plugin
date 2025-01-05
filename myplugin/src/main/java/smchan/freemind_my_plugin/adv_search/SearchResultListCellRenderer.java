@@ -2,6 +2,7 @@ package smchan.freemind_my_plugin.adv_search;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -32,14 +33,18 @@ class SearchResultListCellRenderer implements ListCellRenderer<SearchResult> {
         _compositeIcon.setIcons(value.getNode().getIcons());
         _label.setIcon(_compositeIcon);
 
-        // Set JLabel width by setting the size of the HTML "View"
-        // javax.swing.plaf.basic.BasicHTML$Renderer
-        // The view is found through the JLabel's "client property"
-        // This trick is found by tracing JLabel.getPreferredSize()...
+        // Set JLabel width to not exceed the parent JList width using the HTML "View"
+        // The goal is to avoid the horizontal scroll bar in JList's parent JScrollPane
         View v = (View) _label.getClientProperty("html");
         if (v != null) {
+            // Ask the JList for its current width
             int width = list.getWidth();
             v.setSize(width, 0);
+            // Ask the View for its preferred spans based on the width set
+            int vpw = (int) v.getPreferredSpan(View.X_AXIS);
+            int vph = (int) v.getPreferredSpan(View.Y_AXIS);
+            // Use the View's preferred spans as the JLabel's preferred size
+            _label.setPreferredSize(new Dimension(vpw, vph));
         }
 
         // Set colors...
