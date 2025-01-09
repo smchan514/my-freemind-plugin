@@ -22,6 +22,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -212,10 +213,20 @@ class AdvancedSearchResultsFrame extends JFrame {
 
     void doGotoSeachResult(SearchResult searchResult) {
         MindMapNode node = searchResult.getNode();
+
+        // Show a warning message and skip the rest if the node has been deleted
+        if (node.getParent() == null) {
+            String message = "The selected node has been deleted";
+            String title = "Advanced Search";
+            JOptionPane.showMessageDialog(this, message, title, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         MindMapController mmc = (MindMapController) node.getMap().getModeController();
-        // Bring map to the top, in case it's hidden by another map
+        // Bring map to the top, in case it's hidden by another map/window
         mmc.showThisMap();
         mmc.centerNode(node);
+        mmc.getFrame().getJFrame().requestFocus();
     }
 
     void doPreviousAction() {
