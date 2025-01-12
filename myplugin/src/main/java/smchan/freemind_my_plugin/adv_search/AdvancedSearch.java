@@ -142,13 +142,13 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
         // This is done at the first invocation of the Advanced search function
         if (_resultsFrame == null) {
             // Lazy init
-            _resultsFrame = new AdvancedSearchResultsFrame();
+            _resultsFrame = new AdvancedSearchResultsFrame(frame);
 
             // Register for map close event
             mmc.getController().getMapModuleManager().addListener(new MyMapModuleManagerListener());
         }
 
-        _resultsFrame.showSearchResults(frame, searchTerm, results, totalCount);
+        _resultsFrame.showSearchResults(searchTerm, results, totalCount);
     }
 
     private MindMapNode[] extractAllRootNodes(MindMapController mmc) {

@@ -3,10 +3,12 @@ package smchan.freemind_my_plugin.adv_search;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -19,6 +21,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -36,7 +39,7 @@ import freemind.modes.mindmapmode.MindMapController;
 /**
  * Stand-alone window showing search results
  */
-class AdvancedSearchResultsFrame extends JFrame {
+class AdvancedSearchResultsFrame extends JDialog {
 
     private static final long serialVersionUID = 1L;
     private static final Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
@@ -46,15 +49,17 @@ class AdvancedSearchResultsFrame extends JFrame {
     private SearchResultsListModel _listModel;
     private JList<SearchResult> _jlist;
 
-    public AdvancedSearchResultsFrame() {
+    public AdvancedSearchResultsFrame(Frame owner) {
+        super(owner);
         initComponents();
     }
 
-    public void showSearchResults(Component owner, String searchTerm, Set<SearchResult> results, int totalCount) {
+    public void showSearchResults(String searchTerm, Set<SearchResult> results, int totalCount) {
         if (!isVisible()) {
             pack();
 
             // Align the frame to the lower right corner of the owner frame
+            Window owner = getOwner();
             Point pt = new Point();
             owner.getLocation(pt);
             pt.x += owner.getWidth() - this.getWidth();
