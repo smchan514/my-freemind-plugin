@@ -20,6 +20,7 @@
 		<plugin_property name="insert_format" value="{1} {0}"/>
         <!-- Put an empty time_zone value to force local time -->
 		<plugin_property name="time_zone" value=""/>
+        <plugin_property name="known_prefixes" value=">>>,&lt;&lt;&lt;"/>
 	</plugin_action>
 	<plugin_action 
 		documentation="Insert local date time" 
@@ -32,6 +33,7 @@
 		<plugin_property name="time_zone" value=""/>
 		<plugin_property name="date_format" value="'['yyyy-MM-dd'T'HH:mm:ssZ']'"/>
 		<plugin_property name="insert_format" value="{1} {0}"/>
+        <plugin_property name="known_prefixes" value=">>>,&lt;&lt;&lt;"/>
 	</plugin_action>
 	<plugin_action 
 		documentation="Insert UTC date time" 
@@ -44,6 +46,7 @@
 		<plugin_property name="time_zone" value="UTC"/>
 		<plugin_property name="date_format" value="'['yyyy-MM-dd'T'HH:mm:ss'Z]'"/>
 		<plugin_property name="insert_format" value="{1} {0}"/>
+        <plugin_property name="known_prefixes" value=">>>,&lt;&lt;&lt;"/>
 	</plugin_action>
 	<plugin_action 
 		documentation="Insert random string" 

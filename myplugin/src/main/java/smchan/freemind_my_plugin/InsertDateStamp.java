@@ -3,6 +3,7 @@ package smchan.freemind_my_plugin;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -22,8 +23,14 @@ import freemind.modes.mindmapmode.actions.xml.ActionPair;
  * </PRE>
  */
 public class InsertDateStamp extends ExportHook {
+    private static final String RES_DATE_FORMAT = "date_format";
+    private static final String RES_KNOWN_PREFIXES = "known_prefixes";
+    private static final String RES_INSERT_FORMAT = "insert_format";
+    private static final String RES_TIME_ZONE = "time_zone";
+
     private boolean _initialized = false;
     private SimpleDateFormat _sdf;
+    private final HashSet<String> _knownPrefixes = new HashSet<>();
 
     /**
      * Timestamp insertion format with the following positional arguments
@@ -51,8 +58,9 @@ public class InsertDateStamp extends ExportHook {
         super.startupMapHook();
 
         // Lazy init of this action
-        if (!_initialized)
+        if (!_initialized) {
             performInit();
+        }
 
         // Skip the rest unless there is only one node selected
         List<?> list = getController().getSelecteds();
@@ -70,8 +78,16 @@ public class InsertDateStamp extends ExportHook {
             // No current text, put the timestamp as-is
             newText = timestamp;
         } else {
+            // Deteect prefix
+            PrefixEntry entry = detectPrefix(newText);
+
             // Insert timestamp into current text using _insertFormat
-            newText = MessageFormat.format(_insertFormat, newText, timestamp);
+            newText = MessageFormat.format(_insertFormat, entry.getRemainder(), timestamp);
+
+            if (entry.getPrefix() != null) {
+                // Add back the prefix (or empty string)
+                newText = entry.getPrefix() + " " + newText;
+            }
         }
 
         // Assign new text to the selected node with support for undo
@@ -95,25 +111,69 @@ public class InsertDateStamp extends ExportHook {
     }
 
     /**
+     * @param  text a non-null instance of String
+     * @return      a non-null instance of PrefixEntry
+     */
+    private PrefixEntry detectPrefix(String text) {
+        for (String p : _knownPrefixes) {
+            if (text.startsWith(p)) {
+                return new PrefixEntry(p, text.substring(p.length()).stripLeading());
+            }
+        }
+
+        // No known prefix detected in text
+        return new PrefixEntry(null, text);
+    }
+
+    /**
      * Perform initialization of this action
      */
     private void performInit() {
         String str;
 
-        if ((str = getResourceString("date_format")) != null) {
+        if ((str = getResourceString(RES_DATE_FORMAT)) != null) {
             _dateFormat = str;
             _sdf = new SimpleDateFormat(str);
         }
 
-        if ((str = getResourceString("insert_format")) != null) {
+        if ((str = getResourceString(RES_INSERT_FORMAT)) != null) {
             _insertFormat = str;
         }
 
-        if ((str = getResourceString("time_zone")) != null && !str.isEmpty()) {
+        if ((str = getResourceString(RES_TIME_ZONE)) != null && !str.isEmpty()) {
             TimeZone tz = TimeZone.getTimeZone(str);
             _sdf.setTimeZone(tz);
         }
 
+        if ((str = getResourceString(RES_KNOWN_PREFIXES)) != null) {
+            // Prefixes separated by comma (whitespace preserved)
+            String[] parts = str.split(",");
+            for (String p : parts) {
+                _knownPrefixes.add(p);
+            }
+        }
+
         _initialized = true;
+    }
+
+    ////////////////////////////////////////////////////
+    private static class PrefixEntry {
+        private final String _prefix;
+        private final String _remainder;
+
+        public PrefixEntry(String prefix, String remainder) {
+            assert remainder != null;
+
+            _prefix = prefix;
+            _remainder = remainder;
+        }
+
+        public String getPrefix() {
+            return _prefix;
+        }
+
+        public String getRemainder() {
+            return _remainder;
+        }
     }
 }
