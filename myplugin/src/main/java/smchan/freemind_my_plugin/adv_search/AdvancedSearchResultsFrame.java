@@ -171,6 +171,7 @@ class AdvancedSearchResultsFrame extends JDialog {
         _listModel.addListDataListener(new MyListDataListener());
         _jlist = new JList<>(_listModel);
         _jlist.addMouseListener(new MyMouseListener());
+        _jlist.addMouseMotionListener(new MyMouseMotionListener(new SearchResultToolTipRenderer(_jlist)));
         _jlist.setCellRenderer(new SearchResultListCellRenderer());
         JScrollPane jsp;
         comp = jsp = new JScrollPane(_jlist);
@@ -301,6 +302,22 @@ class AdvancedSearchResultsFrame extends JDialog {
                 SearchResult searchResult = _jlist.getSelectedValue();
                 doGotoSeachResult(searchResult);
             }
+        }
+    }
+
+    //////////////////////
+    private static class MyMouseMotionListener extends MouseAdapter {
+        private final SearchResultToolTipRenderer _toolTipRenderer;
+
+        public MyMouseMotionListener(SearchResultToolTipRenderer toolTipRenderer) {
+            _toolTipRenderer = toolTipRenderer;
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            JList<?> jlist = (JList<?>) e.getSource();
+            int index = jlist.locationToIndex(e.getPoint());
+            _toolTipRenderer.updateToolTipText(index);
         }
     }
 
