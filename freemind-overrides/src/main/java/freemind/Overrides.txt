@@ -41,4 +41,8 @@
     accessories.plugins.HierarchicalIcons to reduce delay when closing a mind
     map or Freemind
 
+[2025-01-22]
+    Add keyboard shortcut configuration for "Save All" by adding the attribute
+    key_stroke in the element plugin_action in accessories\plugins\SaveAll.xml
+
 #EOF
