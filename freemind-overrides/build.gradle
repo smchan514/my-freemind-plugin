@@ -26,6 +26,10 @@ compileJava {
 }
 
 jar {
+    from('src/main/java') {
+        include('**/*.xml')
+    }
+
     manifest {
         attributes("Build-date": getDateTime(),
                    "Git-hash": getGitHash(),
