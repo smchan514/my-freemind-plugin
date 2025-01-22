@@ -28,9 +28,15 @@ Notes:
 1. On the "encrypted attribute" feature:
     1. Use OpenJDK or Amazon Corretto JRE/JDK to enable use of AES-256.
     2. Use JRE/JDK 9 or later to enable auto reset on user lock screen (Tested with Amazon Corretto JDK 11.0.24.8.1).
-1. The keyboard shortcut for "Advanced search" may clash with the existing for "Search and replace" in baseline Freemind, to disable the latter:
+2. The keyboard shortcut for "Advanced search" may clash with the existing for "Search and replace" in baseline Freemind, to disable the latter:
     1. Locate the user config file `C:\Users\%USERNAME%\.freemind\auto.properties` 
     2. Insert the following in a new line: `keystroke_plugins/TimeList.xml_key=invalid`
+3. The keyboard shortcut for "Save All" can be overridden as follows:
+    1. Locate the user config file `C:\Users\%USERNAME%\.freemind\auto.properties` 
+    2. Insert the two lines below:
+        1. `keystroke_accessories/plugins/SaveAll=ctrl shift S`
+        2. `keystroke_saveAs=invalid`
+
 
 ## How to compile locally
 
