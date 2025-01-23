@@ -7,6 +7,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
@@ -108,12 +110,14 @@ class AdvancedSearchDialog extends JDialog {
         JPanel panel = new JPanel(new GridBagLayout());
         JComponent comp;
         GridBagConstraints gbc;
+        JLabel jlabel;
+        JTextField jtf;
 
         ///////////////////////
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = DEFAULT_INSETS;
-        comp = new JLabel("Search:");
+        comp = jlabel = new JLabel("Search:");
         panel.add(comp, gbc);
 
         gbc = new GridBagConstraints();
@@ -122,8 +126,11 @@ class AdvancedSearchDialog extends JDialog {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-        comp = _jtfSearchTerm = new JTextField(_lastSearchTerm);
-        _jtfSearchTerm.selectAll();
+        comp = _jtfSearchTerm = jtf = new JTextField(_lastSearchTerm);
+        jtf.selectAll();
+        jtf.addFocusListener(new MyTextfieldFocusListener(jtf));
+        jlabel.setDisplayedMnemonic('S');
+        jlabel.setLabelFor(jtf);
         panel.add(comp, gbc);
 
         return panel;
@@ -412,4 +419,18 @@ class AdvancedSearchDialog extends JDialog {
 
     }
 
+    //////////////////////
+    private static class MyTextfieldFocusListener extends FocusAdapter {
+        private final JTextField _jtf;
+
+        public MyTextfieldFocusListener(JTextField jtf) {
+            assert jtf != null;
+            _jtf = jtf;
+        }
+
+        @Override
+        public void focusGained(FocusEvent e) {
+            _jtf.selectAll();
+        }
+    }
 }
