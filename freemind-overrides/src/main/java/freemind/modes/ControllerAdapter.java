@@ -179,7 +179,13 @@ public abstract class ControllerAdapter implements ModeController,
 
 	@Override
     public void nodeRefresh(MindMapNode node) {
-		nodeRefresh(node, false);
+        // [2025-01-24 SMC] Reversing previous hack in nodeRefresh(MindMapNode, boolean)
+        // because it is causing stack overflow with the "modification timestamp"
+        // feature.
+        // Change the second parameter here to end up with the same hack while allowing
+        // call to updateNode() be skipped when nodeRefresh(MindMapNode, boolean) is
+        // called from method setToolTip()
+        nodeRefresh(node, true);
 	}
 
 	private void nodeRefresh(MindMapNode node, boolean isUpdate) {
@@ -190,16 +196,9 @@ public abstract class ControllerAdapter implements ModeController,
 			if (node.getHistoryInformation() != null) {
 				node.getHistoryInformation().setLastModifiedAt(new Date());
 			}
-            // [SMC 2024-12-05] Moved...
 			// Tell any node hooks that the node is changed:
-            // updateNode(node);
+            updateNode(node);
 		}
-
-        // [SMC 2024-12-05] Moved the call to updateNode() out of if(isUpdate)
-        // so that hierarchical icon display can be updated corrected when
-        // folding / unfolding a node
-        updateNode(node);
-
 		// fc, 10.10.06: Dirty hack in order to keep this method away from being
 		// used by everybody.
 		((MapAdapter) getMap()).nodeChangedInternal(node);
@@ -1699,7 +1698,7 @@ public abstract class ControllerAdapter implements ModeController,
 	@Override
     public void setToolTip(MindMapNode node, String key, String value) {
 		node.setToolTip(key, value);
-		nodeRefresh(node);
+        nodeRefresh(node, false);
 	}
 
 }
