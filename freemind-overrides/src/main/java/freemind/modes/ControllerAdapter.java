@@ -1480,7 +1480,7 @@ public abstract class ControllerAdapter implements ModeController,
 
 			String plainText = getMap().getAsPlainText(selectedNodes);
 			return new MindMapNodesSelection(forNodesFlavor, null, plainText,
-					getMap().getAsRTF(selectedNodes), getMap().getAsHTML(
+					getMap().getAsRTF(selectedNodes), SimpleHtmlConverter.convertHtml(
 							selectedNodes), null, null, createForNodeIdsFlavor);
 		}
 
