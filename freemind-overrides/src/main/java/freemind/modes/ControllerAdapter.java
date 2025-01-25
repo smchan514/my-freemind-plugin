@@ -174,28 +174,28 @@ public abstract class ControllerAdapter implements ModeController,
 	@Override
     public void nodeChanged(MindMapNode node) {
 		getMap().setSaved(false);
-		nodeRefresh(node, true);
+        // [2025-01-24 SMC] This is functionally equivalent to the call to nodeRefresh()
+        // in original Freemind
+        nodeRefresh(node, true, true);
 	}
 
 	@Override
     public void nodeRefresh(MindMapNode node) {
-        // [2025-01-24 SMC] Reversing previous hack in nodeRefresh(MindMapNode, boolean)
-        // because it is causing stack overflow with the "modification timestamp"
-        // feature.
-        // Change the second parameter here to end up with the same hack while allowing
-        // call to updateNode() be skipped when nodeRefresh(MindMapNode, boolean) is
-        // called from method setToolTip()
-        nodeRefresh(node, true);
+        // [2025-01-24 SMC] This is functionally equivalent to the hack of 2024-12-05
+        // to trigger hierarchical icon display updates when nodes are folded
+        nodeRefresh(node, true, false);
 	}
 
-	private void nodeRefresh(MindMapNode node, boolean isUpdate) {
+    private void nodeRefresh(MindMapNode node, boolean notifyNodeUpdate, boolean changeLastModifiedAt) {
 		logger.finest("nodeChanged called for node " + node + " parent="
 				+ node.getParentNode());
-		if (isUpdate) {
-			// update modification times:
-			if (node.getHistoryInformation() != null) {
-				node.getHistoryInformation().setLastModifiedAt(new Date());
-			}
+        if (changeLastModifiedAt) {
+            // update modification times:
+            if (node.getHistoryInformation() != null) {
+                node.getHistoryInformation().setLastModifiedAt(new Date());
+            }
+        }
+        if (notifyNodeUpdate) {
 			// Tell any node hooks that the node is changed:
             updateNode(node);
 		}
@@ -229,7 +229,7 @@ public abstract class ControllerAdapter implements ModeController,
 	/**
 	 * Overwrite this method to perform additional operations to an node update.
 	 */
-	protected void updateNode(MindMapNode node) {
+    protected void updateNode(MindMapNode node) {
 		for (Iterator iter = mNodeSelectionListeners.iterator(); iter.hasNext();) {
 			NodeSelectionListener listener = (NodeSelectionListener) iter
 					.next();
@@ -1698,7 +1698,9 @@ public abstract class ControllerAdapter implements ModeController,
 	@Override
     public void setToolTip(MindMapNode node, String key, String value) {
 		node.setToolTip(key, value);
-        nodeRefresh(node, false);
+        // [2025-01-24 SMC] Prevent stack overflow due to "CreationModificationPlugin"
+        // by skipping node update notification on nodeRefresh()
+        nodeRefresh(node, false, false);
 	}
 
 }
