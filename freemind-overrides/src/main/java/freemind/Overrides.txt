@@ -49,4 +49,8 @@
     Reworked the hack in freemind.modes.ControllerAdapter from 2024-12-05 due
     to stack overflow with the "modification timestamp" feature.
 
+[2025-01-24]
+    Override freemind.modes.ControllerAdapter to use simple HTML converter
+    for better Teams / Office compatibility
+
 #EOF
