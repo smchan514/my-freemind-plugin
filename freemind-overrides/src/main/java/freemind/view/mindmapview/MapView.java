@@ -93,7 +93,8 @@ public class MapView extends JPanel implements Printable, Autoscroll {
 			mSize = getSize();
 		}
 
-		public void componentResized(ComponentEvent pE) {
+		@Override
+        public void componentResized(ComponentEvent pE) {
 			logger.fine("Component resized " + pE + " old size " + mSize
 					+ " new size " + getSize());
 			// int deltaWidth = mSize.width - getWidth();
@@ -127,7 +128,8 @@ public class MapView extends JPanel implements Printable, Autoscroll {
 			// }
 		}
 
-		protected boolean processKeyBinding(KeyStroke pKs, KeyEvent pE,
+		@Override
+        protected boolean processKeyBinding(KeyStroke pKs, KeyEvent pE,
 				int pCondition, boolean pPressed) {
 			/*
 			 * the scroll pane eats control page up and down. Moreover, the page
@@ -140,7 +142,8 @@ public class MapView extends JPanel implements Printable, Autoscroll {
 			return super.processKeyBinding(pKs, pE, pCondition, pPressed);
 		}
 
-		protected void validateTree() {
+		@Override
+        protected void validateTree() {
 			final Component view = getViewport().getView();
 			if (view != null) {
 				view.validate();
@@ -375,26 +378,31 @@ public class MapView extends JPanel implements Printable, Autoscroll {
 		// current node is selected.
 		setFocusTraversalPolicy(new FocusTraversalPolicy() {
 
-			public Component getLastComponent(Container pAContainer) {
+			@Override
+            public Component getLastComponent(Container pAContainer) {
 				return getDefaultComponent(pAContainer);
 			}
 
-			public Component getFirstComponent(Container pAContainer) {
+			@Override
+            public Component getFirstComponent(Container pAContainer) {
 				return getDefaultComponent(pAContainer);
 			}
 
-			public Component getDefaultComponent(Container pAContainer) {
+			@Override
+            public Component getDefaultComponent(Container pAContainer) {
 				Component defaultComponent = getSelected();
 				logger.fine("Focus traversal to: " + defaultComponent);
 				return defaultComponent;
 			}
 
-			public Component getComponentBefore(Container pAContainer,
+			@Override
+            public Component getComponentBefore(Container pAContainer,
 					Component pAComponent) {
 				return getDefaultComponent(pAContainer);
 			}
 
-			public Component getComponentAfter(Container pAContainer,
+			@Override
+            public Component getComponentAfter(Container pAContainer,
 					Component pAComponent) {
 				return getDefaultComponent(pAContainer);
 			}
@@ -411,7 +419,8 @@ public class MapView extends JPanel implements Printable, Autoscroll {
 	private void createPropertyChangeListener() {
 		propertyChangeListener = new FreemindPropertyListener() {
 
-			public void propertyChanged(String propertyName, String newValue,
+			@Override
+            public void propertyChanged(String propertyName, String newValue,
 					String oldValue) {
 				if (propertyName.equals(FreeMind.RESOURCES_NODE_TEXT_COLOR)) {
 					standardNodeTextColor = Tools.xmlToColor(newValue);
@@ -477,7 +486,8 @@ public class MapView extends JPanel implements Printable, Autoscroll {
 			mNode = pNode;
 		}
 
-		public void run() {
+		@Override
+        public void run() {
 			centerNode(mNode);
 		}
 
@@ -783,6 +793,19 @@ public class MapView extends JPanel implements Printable, Autoscroll {
 	 * Select the node, resulting in only that one being selected.
 	 */
 	public void selectAsTheOnlyOneSelected(NodeView newSelected) {
+        try {
+            _selectAsTheOnlyOneSelected(newSelected);
+        } catch (NullPointerException e) {
+            System.err.println("NPE in selectAsTheOnlyOneSelected()");
+            e.printStackTrace(System.err);
+        }
+    }
+
+    /**
+     * Original method from Freemind, to be called in a try catch to handle NPE when
+     * a selection gone wrong and preventing the application from saving and exiting
+     */
+    public void _selectAsTheOnlyOneSelected(NodeView newSelected) {
 		logger.finest("selectAsTheOnlyOneSelected");
 		LinkedList oldSelecteds = getSelecteds();
 		// select new node
@@ -1047,7 +1070,8 @@ public class MapView extends JPanel implements Printable, Autoscroll {
 		// do the sorting:
 		Collections.sort(pointNodePairs, new Comparator() {
 
-			public int compare(Object arg0, Object arg1) {
+			@Override
+            public int compare(Object arg0, Object arg1) {
 				if (arg0 instanceof Pair) {
 					Pair pair0 = (Pair) arg0;
 					if (arg1 instanceof Pair) {
@@ -1114,7 +1138,8 @@ public class MapView extends JPanel implements Printable, Autoscroll {
 	 * 
 	 * @see java.awt.Container#validateTree()
 	 */
-	protected void validateTree() {
+	@Override
+    protected void validateTree() {
 		validateSelecteds();
 		super.validateTree();
 		setViewPositionAfterValidate();
@@ -1163,7 +1188,8 @@ public class MapView extends JPanel implements Printable, Autoscroll {
 	 * 
 	 * @see javax.swing.JComponent#paint(java.awt.Graphics)
 	 */
-	public void paint(Graphics g) {
+	@Override
+    public void paint(Graphics g) {
 		long startMilli = System.currentTimeMillis();
 		if (isValid()) {
 			getRoot().getContent().getLocation(rootContentLocation);
@@ -1210,7 +1236,8 @@ public class MapView extends JPanel implements Printable, Autoscroll {
 				+ (mPaintingTime / mPaintingAmount));
 	}
 
-	public void paintChildren(Graphics graphics) {
+	@Override
+    public void paintChildren(Graphics graphics) {
 		// first tries for background images.
 		// if(image == null) {
 		// image =
@@ -1388,7 +1415,8 @@ public class MapView extends JPanel implements Printable, Autoscroll {
 		}
 	}
 
-	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) {
+	@Override
+    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) {
 		// TODO:
 		// ask user for :
 		// - center in page (in page format ?)
@@ -1546,7 +1574,8 @@ public class MapView extends JPanel implements Printable, Autoscroll {
 	 * 
 	 * @see java.awt.dnd.Autoscroll#getAutoscrollInsets()
 	 */
-	public Insets getAutoscrollInsets() {
+	@Override
+    public Insets getAutoscrollInsets() {
 		Rectangle outer = getBounds();
 		Rectangle inner = getParent().getBounds();
 		return new Insets(inner.y - outer.y + margin, inner.x - outer.x
@@ -1560,7 +1589,8 @@ public class MapView extends JPanel implements Printable, Autoscroll {
 	 * 
 	 * @see java.awt.dnd.Autoscroll#autoscroll(java.awt.Point)
 	 */
-	public void autoscroll(Point cursorLocn) {
+	@Override
+    public void autoscroll(Point cursorLocn) {
 		Rectangle r = new Rectangle((int) cursorLocn.getX() - margin,
 				(int) cursorLocn.getY() - margin, 1 + 2 * margin,
 				1 + 2 * margin);
@@ -1587,7 +1617,8 @@ public class MapView extends JPanel implements Printable, Autoscroll {
 	 * 
 	 * @see javax.swing.JComponent#getPreferredSize()
 	 */
-	public Dimension getPreferredSize() {
+	@Override
+    public Dimension getPreferredSize() {
 		if (!getParent().isValid()) {
 			final Dimension preferredLayoutSize = getLayout()
 					.preferredLayoutSize(this);

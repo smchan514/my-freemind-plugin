@@ -52,5 +52,10 @@
 [2025-01-24]
     Override freemind.modes.ControllerAdapter to use simple HTML converter
     for better Teams / Office compatibility
+    
+[2025-01-31]
+    Modified freemind.view.mindmapview.MapView to disable catch NPE in method
+    selectAsTheOnlyOneSelected(), which could prevent the application from
+    saving and exiting
 
 #EOF

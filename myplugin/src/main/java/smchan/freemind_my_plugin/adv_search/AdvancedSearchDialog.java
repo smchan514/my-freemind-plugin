@@ -24,6 +24,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import accessories.plugins.time.JSpinField;
 
@@ -49,6 +51,7 @@ class AdvancedSearchDialog extends JDialog {
     private static String _lastSearchTerm = "";
     private static boolean _lastCaseSensitive = false;
     private static boolean _lastRegexSearch = false;
+    private static boolean _lastExactMatch = false;
     private static int _lastMaxResults = 50;
     private static SearchScope _lastSearchScope = SearchScope.SearchEntireMindMap;
     private static SearchOrientation _lastSearchOrientation = SearchOrientation.DepthFirst;
@@ -57,6 +60,7 @@ class AdvancedSearchDialog extends JDialog {
     private JTextField _jtfSearchTerm;
     private JCheckBox _jcbRegexSearch;
     private JCheckBox _jcbCaseSensitive;
+    private JCheckBox _jcbExactMatch;
     private JRadioButton _jrbSearchEntireMap;
     private JRadioButton _jrbSearchSelectedNodes;
     private JRadioButton _jrbSearchAllOpenMaps;
@@ -203,6 +207,20 @@ class AdvancedSearchDialog extends JDialog {
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = DEFAULT_INSETS;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        comp = jcb = _jcbExactMatch = new JCheckBox("Exact match", _lastExactMatch);
+        jcb.setMnemonic('X');
+        panel.add(comp, gbc);
+
+        // "Exact match" applicable only when not doing regex search
+        _jcbRegexSearch.addChangeListener(new EnabledStateSwticher(_jcbExactMatch));
+
+        ///////////////////////
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = DEFAULT_INSETS;
         comp = new JLabel("Max results:");
         panel.add(comp, gbc);
 
@@ -334,6 +352,10 @@ class AdvancedSearchDialog extends JDialog {
         return _lastRegexSearch = _jcbRegexSearch.isSelected();
     }
 
+    public boolean isExactMatch() {
+        return _lastExactMatch = _jcbExactMatch.isSelected();
+    }
+
     public int getMaxResults() {
         return _lastMaxResults = _jsfMaxResults.getValue();
     }
@@ -432,5 +454,23 @@ class AdvancedSearchDialog extends JDialog {
         public void focusGained(FocusEvent e) {
             _jtf.selectAll();
         }
+    }
+
+    //////////////////////
+    private static class EnabledStateSwticher implements ChangeListener {
+        private final JComponent _other;
+
+        public EnabledStateSwticher(JComponent other) {
+            assert other != null;
+            _other = other;
+        }
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            JCheckBox source = (JCheckBox) e.getSource();
+            // Disable the other component if source is selected
+            _other.setEnabled(!source.isSelected());
+        }
+
     }
 }

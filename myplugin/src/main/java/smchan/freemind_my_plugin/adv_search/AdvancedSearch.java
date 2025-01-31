@@ -55,12 +55,13 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
         searchTerm = searchTerm.trim();
         boolean isCaseSensitive = dlg.isCaseSensitive();
         boolean isRegexSearch = dlg.isRegexSearch();
+        boolean isExactMatch = dlg.isExactMatch();
         int maxResults = dlg.getMaxResults();
         SearchScope searchScope = dlg.getSearchScope();
         SearchOrientation searchOrientation = dlg.getSearchOrientation();
 
         try {
-            performSearch(frame, searchTerm, isCaseSensitive, isRegexSearch, maxResults, searchScope,
+            performSearch(frame, searchTerm, isCaseSensitive, isRegexSearch, isExactMatch, maxResults, searchScope,
                     searchOrientation);
         } catch (Exception e) {
             String title = "Search failed";
@@ -69,7 +70,7 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
     }
 
     private void performSearch(JFrame frame, String searchTerm, boolean isCaseSensitive, boolean isRegexSearch,
-            int maxResults, SearchScope searchScope, SearchOrientation searchOrientation) {
+            boolean isExactMatch, int maxResults, SearchScope searchScope, SearchOrientation searchOrientation) {
         // Select search scope
         MindMapController mmc = (MindMapController) getController();
         MindMapNode[] nodes;
@@ -92,6 +93,8 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
         IMatcher matcher;
         if (isRegexSearch) {
             matcher = new RegexMatcher(searchTerm, isCaseSensitive);
+        } else if (isExactMatch) {
+            matcher = new ExactMatcher(searchTerm, isCaseSensitive);
         } else {
             matcher = new WordsMatcher(searchTerm, isCaseSensitive);
         }
@@ -242,6 +245,5 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
             // ...
         }
     }
-
 
 }
