@@ -52,6 +52,7 @@ class WordsMatcher implements IMatcher {
         }
 
         String[] words = text.split(REGEX_WHITESPACE);
+        boolean allPartsFouund = true;
 
         // For each part of the search term...
         for (String str : _parts) {
@@ -61,7 +62,15 @@ class WordsMatcher implements IMatcher {
             } else if (text.contains(str)) {
                 // Partial word match scores 1
                 score += 1;
+            } else {
+                // Losing bonus...
+                allPartsFouund = false;
             }
+        }
+
+        // Special bonus if all parts of the search term are found
+        if (allPartsFouund) {
+            score += _parts.length * 5;
         }
 
         return score;
