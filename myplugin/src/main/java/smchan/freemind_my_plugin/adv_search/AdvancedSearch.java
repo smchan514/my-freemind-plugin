@@ -56,13 +56,14 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
         boolean isCaseSensitive = dlg.isCaseSensitive();
         boolean isRegexSearch = dlg.isRegexSearch();
         boolean isExactMatch = dlg.isExactMatch();
+        boolean isSearchInLinks = dlg.isSearchInLinks();
         int maxResults = dlg.getMaxResults();
         SearchScope searchScope = dlg.getSearchScope();
         SearchOrientation searchOrientation = dlg.getSearchOrientation();
 
         try {
-            performSearch(frame, searchTerm, isCaseSensitive, isRegexSearch, isExactMatch, maxResults, searchScope,
-                    searchOrientation);
+            performSearch(frame, searchTerm, isCaseSensitive, isRegexSearch, isExactMatch, isSearchInLinks, maxResults,
+                    searchScope, searchOrientation);
         } catch (Exception e) {
             String title = "Search failed";
             JOptionPane.showMessageDialog(dlg, "<html><body><pre>" + e.getMessage(), title, JOptionPane.ERROR_MESSAGE);
@@ -70,12 +71,13 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
     }
 
     private void performSearch(JFrame frame, String searchTerm, boolean isCaseSensitive, boolean isRegexSearch,
-            boolean isExactMatch, int maxResults, SearchScope searchScope, SearchOrientation searchOrientation) {
+            boolean isExactMatch, boolean isSearchInLinks, int maxResults, SearchScope searchScope,
+            SearchOrientation searchOrientation) {
         // Select search scope
         MindMapController mmc = (MindMapController) getController();
         MindMapNode[] nodes;
         switch (searchScope) {
-        case SearchEntireMindMap:
+        case SearchCurrentMindMap:
             nodes = new MindMapNode[] { mmc.getRootNode() };
             break;
         case SearchSelectedNodes:
@@ -110,8 +112,9 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
         // Perform the search!
         int totalCount = 0;
         for (MindMapNode node : treeWalker) {
+            String text = extractTextFromNode(node, isSearchInLinks);
+
             // Compute the score for the specified node
-            String text = node.getPlainTextContent();
             int score = matcher.getMatchScore(text);
             if (score > 0) {
                 results.add(new SearchResult(node, score));
@@ -152,6 +155,18 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
         }
 
         _resultsFrame.showSearchResults(searchTerm, results, totalCount);
+    }
+
+    private String extractTextFromNode(MindMapNode node, boolean isSearchInLinks) {
+        String text = node.getPlainTextContent();
+        if (isSearchInLinks) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(text);
+            sb.append(' ');
+            sb.append(node.getLink());
+            text = sb.toString();
+        }
+        return text;
     }
 
     private MindMapNode[] extractAllRootNodes(MindMapController mmc) {

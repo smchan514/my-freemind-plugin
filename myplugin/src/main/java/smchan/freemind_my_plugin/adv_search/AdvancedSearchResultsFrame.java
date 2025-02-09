@@ -247,6 +247,9 @@ class AdvancedSearchResultsFrame extends JDialog {
             _jlist.setSelectedIndex((_jlist.getSelectedIndex() - 1 + size) % size);
         }
 
+        // Scroll to selected item
+        _jlist.ensureIndexIsVisible(_jlist.getSelectedIndex());
+
         SearchResult searchResult = _jlist.getSelectedValue();
         doGotoSeachResult(searchResult);
     }
@@ -262,6 +265,9 @@ class AdvancedSearchResultsFrame extends JDialog {
         } else {
             _jlist.setSelectedIndex((_jlist.getSelectedIndex() + 1) % size);
         }
+
+        // Scroll to selected item
+        _jlist.ensureIndexIsVisible(_jlist.getSelectedIndex());
 
         SearchResult searchResult = _jlist.getSelectedValue();
         doGotoSeachResult(searchResult);

@@ -34,8 +34,9 @@ import accessories.plugins.time.JSpinField;
  */
 class AdvancedSearchDialog extends JDialog {
 
+
     public enum SearchScope {
-        SearchEntireMindMap,
+        SearchCurrentMindMap,
         SearchSelectedNodes,
         SearchAllOpenMaps
     }
@@ -47,13 +48,26 @@ class AdvancedSearchDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
     private static final Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
+    private static final Insets CHECKBOX_INSETS = new Insets(1, 5, 1, 5);
+
+    private static final char MNEMONIC_ALL_OPEN_MAPS = 'A';
+    private static final char MNEMONIC_BREADTH_FIRST = 'B';
+    private static final char MNEMONIC_CASE_SENSITIVE = 'C';
+    private static final char MNEMONIC_DEPTH_FIRST = 'D';
+    private static final char MNEMONIC_CURRENT_MIND_MAP = 'E';
+    private static final char MNEMONIC_FROM_SELECTED_NODES = 'F';
+    private static final char MNEMONIC_SEARCH_IN_LINKS = 'K';
+    private static final char MNEMONIC_REGULAR_EXPRESSION = 'R';
+    private static final char MNEMONIC_SEARCH_TERM = 'S';
+    private static final char MNEMONIC_EXACT_MATCH = 'X';
 
     private static String _lastSearchTerm = "";
     private static boolean _lastCaseSensitive = false;
     private static boolean _lastRegexSearch = false;
     private static boolean _lastExactMatch = false;
+    private static boolean _lastSearchInLinks = false;
     private static int _lastMaxResults = 50;
-    private static SearchScope _lastSearchScope = SearchScope.SearchEntireMindMap;
+    private static SearchScope _lastSearchScope = SearchScope.SearchCurrentMindMap;
     private static SearchOrientation _lastSearchOrientation = SearchOrientation.DepthFirst;
 
     private JButton _jbOK;
@@ -61,6 +75,7 @@ class AdvancedSearchDialog extends JDialog {
     private JCheckBox _jcbRegexSearch;
     private JCheckBox _jcbCaseSensitive;
     private JCheckBox _jcbExactMatch;
+    private JCheckBox _jcbSearchInLinks;
     private JRadioButton _jrbSearchEntireMap;
     private JRadioButton _jrbSearchSelectedNodes;
     private JRadioButton _jrbSearchAllOpenMaps;
@@ -133,7 +148,7 @@ class AdvancedSearchDialog extends JDialog {
         comp = _jtfSearchTerm = jtf = new JTextField(_lastSearchTerm);
         jtf.selectAll();
         jtf.addFocusListener(new MyTextfieldFocusListener(jtf));
-        jlabel.setDisplayedMnemonic('S');
+        jlabel.setDisplayedMnemonic(MNEMONIC_SEARCH_TERM);
         jlabel.setLabelFor(jtf);
         panel.add(comp, gbc);
 
@@ -184,34 +199,34 @@ class AdvancedSearchDialog extends JDialog {
         ///////////////////////
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.EAST;
-        gbc.insets = DEFAULT_INSETS;
+        gbc.insets = CHECKBOX_INSETS;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
         comp = jcb = _jcbCaseSensitive = new JCheckBox("Case sensitive", _lastCaseSensitive);
-        jcb.setMnemonic('C');
+        jcb.setMnemonic(MNEMONIC_CASE_SENSITIVE);
         panel.add(comp, gbc);
 
         ///////////////////////
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.EAST;
-        gbc.insets = DEFAULT_INSETS;
+        gbc.insets = CHECKBOX_INSETS;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
         comp = jcb = _jcbRegexSearch = new JCheckBox("Regular expression", _lastRegexSearch);
-        jcb.setMnemonic('R');
+        jcb.setMnemonic(MNEMONIC_REGULAR_EXPRESSION);
         panel.add(comp, gbc);
 
         ///////////////////////
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.EAST;
-        gbc.insets = DEFAULT_INSETS;
+        gbc.insets = CHECKBOX_INSETS;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
         comp = jcb = _jcbExactMatch = new JCheckBox("Exact match", _lastExactMatch);
-        jcb.setMnemonic('X');
+        jcb.setMnemonic(MNEMONIC_EXACT_MATCH);
         panel.add(comp, gbc);
 
         // "Exact match" applicable only when not doing regex search
@@ -220,7 +235,18 @@ class AdvancedSearchDialog extends JDialog {
         ///////////////////////
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.EAST;
-        gbc.insets = DEFAULT_INSETS;
+        gbc.insets = CHECKBOX_INSETS;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        comp = jcb = _jcbSearchInLinks = new JCheckBox("Search in links", _lastSearchInLinks);
+        jcb.setMnemonic(MNEMONIC_SEARCH_IN_LINKS);
+        panel.add(comp, gbc);
+
+        ///////////////////////
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = CHECKBOX_INSETS;
         comp = new JLabel("Max results:");
         panel.add(comp, gbc);
 
@@ -250,27 +276,27 @@ class AdvancedSearchDialog extends JDialog {
         ///////////////////////
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.EAST;
-        gbc.insets = DEFAULT_INSETS;
+        gbc.insets = CHECKBOX_INSETS;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
         comp = _jrbDepthFirst = jrb = new JRadioButton("Depth first",
                 _lastSearchOrientation == SearchOrientation.DepthFirst);
         buttonGroup.add(jrb);
-        jrb.setMnemonic('D');
+        jrb.setMnemonic(MNEMONIC_DEPTH_FIRST);
         panel.add(comp, gbc);
 
         ///////////////////////
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.EAST;
-        gbc.insets = DEFAULT_INSETS;
+        gbc.insets = CHECKBOX_INSETS;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
         comp = _jrbBreadthFirst = jrb = new JRadioButton("Breadth first",
                 _lastSearchOrientation == SearchOrientation.BreadthFirst);
         buttonGroup.add(jrb);
-        jrb.setMnemonic('B');
+        jrb.setMnemonic(MNEMONIC_BREADTH_FIRST);
         panel.add(comp, gbc);
 
         return panel;
@@ -289,40 +315,40 @@ class AdvancedSearchDialog extends JDialog {
         ///////////////////////
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.EAST;
-        gbc.insets = DEFAULT_INSETS;
+        gbc.insets = CHECKBOX_INSETS;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-        comp = _jrbSearchEntireMap = jrb = new JRadioButton("Entire mind map",
-                _lastSearchScope == SearchScope.SearchEntireMindMap);
+        comp = _jrbSearchEntireMap = jrb = new JRadioButton("Current mind map",
+                _lastSearchScope == SearchScope.SearchCurrentMindMap);
         buttonGroup.add(jrb);
-        jrb.setMnemonic('E');
+        jrb.setMnemonic(MNEMONIC_CURRENT_MIND_MAP);
         panel.add(comp, gbc);
 
         ///////////////////////
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.EAST;
-        gbc.insets = DEFAULT_INSETS;
+        gbc.insets = CHECKBOX_INSETS;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
         comp = _jrbSearchSelectedNodes = jrb = new JRadioButton("From selected nodes",
                 _lastSearchScope == SearchScope.SearchSelectedNodes);
         buttonGroup.add(jrb);
-        jrb.setMnemonic('F');
+        jrb.setMnemonic(MNEMONIC_FROM_SELECTED_NODES);
         panel.add(comp, gbc);
 
         ///////////////////////
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.EAST;
-        gbc.insets = DEFAULT_INSETS;
+        gbc.insets = CHECKBOX_INSETS;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
         comp = _jrbSearchAllOpenMaps = jrb = new JRadioButton("All open maps",
                 _lastSearchScope == SearchScope.SearchAllOpenMaps);
         buttonGroup.add(jrb);
-        jrb.setMnemonic('A');
+        jrb.setMnemonic(MNEMONIC_ALL_OPEN_MAPS);
         panel.add(comp, gbc);
 
         return panel;
@@ -356,20 +382,24 @@ class AdvancedSearchDialog extends JDialog {
         return _lastExactMatch = _jcbExactMatch.isSelected();
     }
 
+    public boolean isSearchInLinks() {
+        return _lastSearchInLinks = _jcbSearchInLinks.isSelected();
+    }
+
     public int getMaxResults() {
         return _lastMaxResults = _jsfMaxResults.getValue();
     }
 
     public SearchScope getSearchScope() {
         if (_jrbSearchEntireMap.isSelected()) {
-            _lastSearchScope = SearchScope.SearchEntireMindMap;
+            _lastSearchScope = SearchScope.SearchCurrentMindMap;
         } else if (_jrbSearchSelectedNodes.isSelected()) {
             _lastSearchScope = SearchScope.SearchSelectedNodes;
         } else if (_jrbSearchAllOpenMaps.isSelected()) {
             _lastSearchScope = SearchScope.SearchAllOpenMaps;
         } else {
             // Default search entire map
-            _lastSearchScope = SearchScope.SearchEntireMindMap;
+            _lastSearchScope = SearchScope.SearchCurrentMindMap;
         }
 
         return _lastSearchScope;
