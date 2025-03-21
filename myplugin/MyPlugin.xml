@@ -2,6 +2,9 @@
 <!-- [2020-12-22] "menu_bar/insert/insert_utc_date_time" SHIFT-F12 -->
 <plugin	label="plugins/MyPlugin">
 	<plugin_classpath jar="myplugin/myplugin.jar"/>
+    <plugin_registration isPluginBase="false" class_name="smchan.freemind_my_plugin.Autosave">
+        <plugin_mode class_name="freemind.modes.mindmapmode"/>
+    </plugin_registration>
 	<plugin_action 
 		documentation="Insert date stamp" 
 		name="Insert date stamp" base="freemind.extensions.ModeControllerHookAdapter" 
