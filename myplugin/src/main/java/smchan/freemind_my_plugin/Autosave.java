@@ -15,13 +15,23 @@ import freemind.view.MapModule;
 public class Autosave implements HookRegistration {
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(Autosave.class.getName());
 
+    private static final String PROP_AUTOSAVE = "autosave.windows_lost_focus";
     private static boolean _firstTime = true;
 
     public Autosave(ModeController controller, MindMap map) {
         if (_firstTime) {
-            LOGGER.fine("Register autosave on windows focus lost...");
-            controller.getFrame().getJFrame().addWindowFocusListener(new AutosaveAdapter(controller));
+            activateAutosave(controller);
             _firstTime = false;
+        }
+    }
+
+    private void activateAutosave(ModeController controller) {
+        String str = controller.getController().getProperty(PROP_AUTOSAVE);
+        if (Boolean.valueOf(str)) {
+            LOGGER.info("Register autosave on windows focus lost...");
+            controller.getFrame().getJFrame().addWindowFocusListener(new AutosaveAdapter(controller));
+        } else {
+            LOGGER.info("Autosave not enabled");
         }
     }
 
