@@ -15,14 +15,15 @@ import freemind.modes.ModeController;
 import freemind.view.MapModule;
 
 /**
- * Autosave all open maps on Freemind main window focus lost
+ * Autosave all open maps on Freemind main X seconds after window deactivation
+ * (equivalent of focus lost)
  */
 public class Autosave implements HookRegistration {
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(Autosave.class.getName());
 
     private static final String PROP_KEY_AUTOSAVE_ENABLED = "autosave.enabled";
     private static final String PROP_KEY_AUTOSAVE_DELAY_MILLIS = "autosave.delay_millis";
-    private static final int DEFAULT_DELAY_MILLIS = 5000;
+    private static final int DEFAULT_DELAY_MILLIS = 48000;
 
     private static boolean _firstTime = true;
 
@@ -81,14 +82,15 @@ public class Autosave implements HookRegistration {
             _controller = controller;
         }
 
+
         @Override
-        public void windowIconified(WindowEvent e) {
+        public void windowDeactivated(WindowEvent e) {
             LOGGER.info("Start timer");
             _timer.start();
         }
 
         @Override
-        public void windowDeiconified(WindowEvent e) {
+        public void windowActivated(WindowEvent e) {
             LOGGER.info("Stop timer");
             _timer.stop();
         }
