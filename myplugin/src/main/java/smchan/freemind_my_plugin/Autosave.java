@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.List;
 
 import javax.swing.Timer;
@@ -106,8 +107,15 @@ public class Autosave implements HookRegistration {
             @SuppressWarnings("unchecked")
             List<MapModule> list = _controller.getController().getMapModuleManager().getMapModuleVector();
             for (MapModule mapModule : list) {
-                if (mapModule.getModel().getFile() == null) {
-                    // Previously unsaved map, skip for now
+                File file = mapModule.getModel().getFile();
+                if (file == null || file.canWrite()) {
+                    // Map that has never been saved or it was saved to a read-only file, skip
+                    // Saving a map like this would require user interaction in a file chooser
+                    continue;
+                }
+
+                if (mapModule.getModel().isSaved()) {
+                    // Map does not have unsaved changes, skip
                     continue;
                 }
 
