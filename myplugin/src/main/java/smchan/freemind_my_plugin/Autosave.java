@@ -108,7 +108,7 @@ public class Autosave implements HookRegistration {
             List<MapModule> list = _controller.getController().getMapModuleManager().getMapModuleVector();
             for (MapModule mapModule : list) {
                 File file = mapModule.getModel().getFile();
-                if (file == null || file.canWrite()) {
+                if (file == null || !file.canWrite()) {
                     // Map that has never been saved or it was saved to a read-only file, skip
                     // Saving a map like this would require user interaction in a file chooser
                     continue;
