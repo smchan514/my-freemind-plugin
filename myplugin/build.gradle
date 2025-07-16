@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation files('../libs/freemind.jar')
+    implementation files('../libs/freemind.jar', '../libs/bindings.jar')
 }
 
 compileJava {

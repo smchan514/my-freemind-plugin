@@ -32,6 +32,8 @@ freemind-src-1.0.0/
 lib/
 /modules/
 
+bin/
+
 # Ignore Gradle project-specific cache directory
 .gradle
 

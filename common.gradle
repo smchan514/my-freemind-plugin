@@ -19,3 +19,8 @@ ext.getGitHash = { ->
     }
     return stdout.toString().trim()
 }
+
+// Repeat compatibility sttings here for Eclipse Buildship
+// Ref: https://github.com/eclipse-buildship/buildship/issues/978#issuecomment-616382644 
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'

@@ -204,4 +204,14 @@
         <plugin_mode class_name="freemind.modes.mindmapmode"/>
         <plugin_menu location="menu_bar/edit/advanced_search"/>
     </plugin_action>
+    <plugin_action
+        documentation="URL Decode"
+        name="URL decode node text"
+        base="freemind.extensions.ModeControllerHookAdapter"
+        label="plugins/MyPlugin/url_decode"
+        key_stroke="ctrl shift U"
+        class_name="smchan.freemind_my_plugin.UrlDecode">
+        <plugin_mode class_name="freemind.modes.mindmapmode"/>
+        <plugin_menu location="menu_bar/edit/url_decode"/>
+	</plugin_action>
 </plugin>
