@@ -2,11 +2,19 @@ package smchan.freemind_my_plugin.adv_search;
 
 import freemind.modes.MindMapNode;
 
+/**
+ * Implementation of {@link IScoring} where the <i>match score</i> is a function
+ * of the last modified timestamp of the node.
+ */
 public class ScoringByLastModified implements IScoring {
 
     private boolean _oldestFirst = true;
     private final long _refTime;
 
+    /**
+     * @param oldestFirst boolean value, when true, indicates search results should
+     *                    be sorted in chronological order
+     */
     public ScoringByLastModified(boolean oldestFirst) {
         _oldestFirst = oldestFirst;
         _refTime = System.currentTimeMillis();
