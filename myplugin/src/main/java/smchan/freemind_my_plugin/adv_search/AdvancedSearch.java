@@ -18,8 +18,8 @@ import freemind.modes.mindmapmode.MindMapController;
 import freemind.view.MapModule;
 import smchan.freemind_my_plugin.NodePath;
 import smchan.freemind_my_plugin.NodePathUtil;
-import smchan.freemind_my_plugin.adv_search.AdvancedSearchDialog.SearchOrientation;
 import smchan.freemind_my_plugin.adv_search.AdvancedSearchDialog.SearchScope;
+import smchan.freemind_my_plugin.adv_search.AdvancedSearchDialog.SearchScoring;
 
 /**
  * Advanced search with the following characteristics:
@@ -59,11 +59,11 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
         boolean isSearchInLinks = dlg.isSearchInLinks();
         int maxResults = dlg.getMaxResults();
         SearchScope searchScope = dlg.getSearchScope();
-        SearchOrientation searchOrientation = dlg.getSearchOrientation();
+        SearchScoring searchScoring = dlg.getSearchScoring();
 
         try {
             performSearch(frame, searchTerm, isCaseSensitive, isRegexSearch, isExactMatch, isSearchInLinks, maxResults,
-                    searchScope, searchOrientation);
+                    searchScope, searchScoring);
         } catch (Exception e) {
             String title = "Search failed";
             JOptionPane.showMessageDialog(dlg, "<html><body><pre>" + e.getMessage(), title, JOptionPane.ERROR_MESSAGE);
@@ -72,7 +72,7 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
 
     private void performSearch(JFrame frame, String searchTerm, boolean isCaseSensitive, boolean isRegexSearch,
             boolean isExactMatch, boolean isSearchInLinks, int maxResults, SearchScope searchScope,
-            SearchOrientation searchOrientation) {
+            SearchScoring searchScoring) {
         // Select search scope
         MindMapController mmc = (MindMapController) getController();
         MindMapNode[] nodes;
@@ -101,12 +101,24 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
             matcher = new WordsMatcher(searchTerm, isCaseSensitive);
         }
 
-        // Select search orientation
-        ITreeWalker treeWalker;
-        if (searchOrientation == SearchOrientation.BreadthFirst) {
-            treeWalker = new TreeWalkerBreadthFirst(nodes);
-        } else {
-            treeWalker = new TreeWalkerDepthFirst(nodes);
+        // Fixed search orientation
+        ITreeWalker treeWalker = new TreeWalkerDepthFirst(nodes);
+
+        // Select scoring option
+        IScoring scoring;
+        switch (searchScoring) {
+        case Relevance:
+            scoring = new ScoringByRelevance();
+            break;
+        case OldestFirst:
+            scoring = new ScoringByLastModified(true);
+            break;
+        case NewestFirst:
+            scoring = new ScoringByLastModified(false);
+            break;
+
+        default:
+            throw new RuntimeException("Invalid search scoring");
         }
 
         // Perform the search!
@@ -115,17 +127,19 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
             String text = extractTextFromNode(node, isSearchInLinks);
 
             // Compute the score for the specified node
-            int score = matcher.getMatchScore(text);
-            if (score > 0) {
-                results.add(new SearchResult(node, score));
+            int relevance = matcher.getMatchRelevance(text);
+            if (relevance > 0) {
+                results.add(new SearchResult(node, scoring.getMatchScore(node, relevance)));
                 totalCount++;
             }
 
+            // Lazily remove excess results
             if (results.size() >= 2 * maxResults) {
                 removeExcessResults(results, maxResults);
             }
         }
 
+        // Search done, remove excess results
         if (results.size() >= maxResults) {
             removeExcessResults(results, maxResults);
         }

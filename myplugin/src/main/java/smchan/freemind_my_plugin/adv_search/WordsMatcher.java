@@ -36,8 +36,8 @@ class WordsMatcher implements IMatcher {
     }
 
     @Override
-    public int getMatchScore(String text) {
-        int score = 0;
+    public int getMatchRelevance(String text) {
+        int relevance = 0;
 
         if (!_isCaseSensitive) {
             // Case-insensitive search: convert all text to lowercase
@@ -47,7 +47,7 @@ class WordsMatcher implements IMatcher {
         if (_searchTerm != null) {
             if (text.contains(_searchTerm)) {
                 // If the search term is found as-is, score 10
-                score += 10;
+                relevance += 10;
             }
         }
 
@@ -58,10 +58,10 @@ class WordsMatcher implements IMatcher {
         for (String str : _parts) {
             if (hasExactMatch(str, words)) {
                 // Exact word match scores 5
-                score += 5;
+                relevance += 5;
             } else if (text.contains(str)) {
                 // Partial word match scores 1
-                score += 1;
+                relevance += 1;
             } else {
                 // Losing bonus...
                 allPartsFouund = false;
@@ -70,10 +70,10 @@ class WordsMatcher implements IMatcher {
 
         // Special bonus if all parts of the search term are found
         if (allPartsFouund) {
-            score += _parts.length * 5;
+            relevance += _parts.length * 5;
         }
 
-        return score;
+        return relevance;
     }
 
     @Override

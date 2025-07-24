@@ -9,16 +9,17 @@ import smchan.freemind_my_plugin.NodePathUtil;
  * 
  * This class implements the {@linkplain Comparable} interface so that instances
  * can be added in the descending order of "match score" in a sorted set, e.g.
- * {@linkplain java.util.TreeSet}.
+ * {@linkplain java.util.TreeSet}. The match score data type is set to long to
+ * accommodate 64-bit millisecond-timestamp.
  */
 class SearchResult implements Comparable<SearchResult> {
 
     private final MindMapNode _node;
     private final NodePath _nodePath;
-    private final float _score;
+    private final long _score;
     private String _html;
 
-    public SearchResult(MindMapNode node, float score) {
+    public SearchResult(MindMapNode node, long score) {
         assert node != null;
 
         _node = node;
@@ -93,7 +94,7 @@ class SearchResult implements Comparable<SearchResult> {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("[%.1f] ", _score));
+        sb.append(String.format("[%d] ", _score));
         sb.append(_node.getPlainTextContent());
         sb.append(" ");
         sb.append(_nodePath);

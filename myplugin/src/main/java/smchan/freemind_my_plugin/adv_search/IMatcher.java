@@ -7,12 +7,13 @@ import java.util.List;
  */
 interface IMatcher {
     /**
-     * Compute the match score for the argument text using the matcher as configured
+     * Compute the match <i>relevance</i> for the argument text using the matcher as
+     * configured
      * 
      * @param  text a non-null instance of String
-     * @return      match score
+     * @return      match relevance
      */
-    int getMatchScore(String text);
+    int getMatchRelevance(String text);
 
     /**
      * Compute the match ranges, i.e. start and end indexes of matched words, in the

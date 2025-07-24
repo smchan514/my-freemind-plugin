@@ -34,16 +34,16 @@ import accessories.plugins.time.JSpinField;
  */
 class AdvancedSearchDialog extends JDialog {
 
-
     public enum SearchScope {
         SearchCurrentMindMap,
         SearchSelectedNodes,
         SearchAllOpenMaps
     }
 
-    public enum SearchOrientation {
-        DepthFirst,
-        BreadthFirst
+    public enum SearchScoring {
+        Relevance,
+        OldestFirst,
+        NewestFirst
     }
 
     private static final long serialVersionUID = 1L;
@@ -51,14 +51,15 @@ class AdvancedSearchDialog extends JDialog {
     private static final Insets CHECKBOX_INSETS = new Insets(1, 5, 1, 5);
 
     private static final char MNEMONIC_ALL_OPEN_MAPS = 'A';
-    private static final char MNEMONIC_BREADTH_FIRST = 'B';
     private static final char MNEMONIC_CASE_SENSITIVE = 'C';
-    private static final char MNEMONIC_DEPTH_FIRST = 'D';
     private static final char MNEMONIC_CURRENT_MIND_MAP = 'E';
     private static final char MNEMONIC_FROM_SELECTED_NODES = 'F';
     private static final char MNEMONIC_SEARCH_IN_LINKS = 'K';
+    private static final char MNEMONIC_NEWEST_FIRST = 'N';
+    private static final char MNEMONIC_OLDEST_FIRST = 'O';
     private static final char MNEMONIC_REGULAR_EXPRESSION = 'R';
     private static final char MNEMONIC_SEARCH_TERM = 'S';
+    private static final char MNEMONIC_RELEVANCE = 'V';
     private static final char MNEMONIC_EXACT_MATCH = 'X';
 
     private static String _lastSearchTerm = "";
@@ -68,7 +69,7 @@ class AdvancedSearchDialog extends JDialog {
     private static boolean _lastSearchInLinks = false;
     private static int _lastMaxResults = 50;
     private static SearchScope _lastSearchScope = SearchScope.SearchCurrentMindMap;
-    private static SearchOrientation _lastSearchOrientation = SearchOrientation.DepthFirst;
+    private static SearchScoring _lastSearchScoring = SearchScoring.Relevance;
 
     private JButton _jbOK;
     private JTextField _jtfSearchTerm;
@@ -79,8 +80,9 @@ class AdvancedSearchDialog extends JDialog {
     private JRadioButton _jrbSearchEntireMap;
     private JRadioButton _jrbSearchSelectedNodes;
     private JRadioButton _jrbSearchAllOpenMaps;
-    private JRadioButton _jrbDepthFirst;
-    private JRadioButton _jrbBreadthFirst;
+    private JRadioButton _jrbRelevance;
+    private JRadioButton _jrbNewestFirst;
+    private JRadioButton _jrbOldestFirst;
     private JSpinField _jsfMaxResults;
 
     private boolean _confirmed;
@@ -265,7 +267,7 @@ class AdvancedSearchDialog extends JDialog {
 
     private JComponent createPanelSearchOrientation() {
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createTitledBorder("Orentiation:"));
+        panel.setBorder(BorderFactory.createTitledBorder("Scoring:"));
         ButtonGroup buttonGroup;
         JComponent comp;
         JRadioButton jrb;
@@ -280,10 +282,9 @@ class AdvancedSearchDialog extends JDialog {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-        comp = _jrbDepthFirst = jrb = new JRadioButton("Depth first",
-                _lastSearchOrientation == SearchOrientation.DepthFirst);
+        comp = _jrbRelevance = jrb = new JRadioButton("Relevance", _lastSearchScoring == SearchScoring.Relevance);
         buttonGroup.add(jrb);
-        jrb.setMnemonic(MNEMONIC_DEPTH_FIRST);
+        jrb.setMnemonic(MNEMONIC_RELEVANCE);
         panel.add(comp, gbc);
 
         ///////////////////////
@@ -293,10 +294,23 @@ class AdvancedSearchDialog extends JDialog {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-        comp = _jrbBreadthFirst = jrb = new JRadioButton("Breadth first",
-                _lastSearchOrientation == SearchOrientation.BreadthFirst);
+        comp = _jrbOldestFirst = jrb = new JRadioButton("Oldest first",
+                _lastSearchScoring == SearchScoring.OldestFirst);
         buttonGroup.add(jrb);
-        jrb.setMnemonic(MNEMONIC_BREADTH_FIRST);
+        jrb.setMnemonic(MNEMONIC_OLDEST_FIRST);
+        panel.add(comp, gbc);
+
+        ///////////////////////
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = CHECKBOX_INSETS;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        comp = _jrbNewestFirst = jrb = new JRadioButton("Newest first",
+                _lastSearchScoring == SearchScoring.OldestFirst);
+        buttonGroup.add(jrb);
+        jrb.setMnemonic(MNEMONIC_NEWEST_FIRST);
         panel.add(comp, gbc);
 
         return panel;
@@ -405,17 +419,19 @@ class AdvancedSearchDialog extends JDialog {
         return _lastSearchScope;
     }
 
-    public SearchOrientation getSearchOrientation() {
-        if (_jrbDepthFirst.isSelected()) {
-            _lastSearchOrientation = SearchOrientation.DepthFirst;
-        } else if (_jrbBreadthFirst.isSelected()) {
-            _lastSearchOrientation = SearchOrientation.BreadthFirst;
+    public SearchScoring getSearchScoring() {
+        if (_jrbNewestFirst.isSelected()) {
+            _lastSearchScoring = SearchScoring.NewestFirst;
+        } else if (_jrbOldestFirst.isSelected()) {
+            _lastSearchScoring = SearchScoring.OldestFirst;
+        } else if (_jrbRelevance.isSelected()) {
+            _lastSearchScoring = SearchScoring.Relevance;
         } else {
             // Default
-            _lastSearchOrientation = SearchOrientation.DepthFirst;
+            _lastSearchScoring = SearchScoring.Relevance;
         }
 
-        return _lastSearchOrientation;
+        return _lastSearchScoring;
     }
 
     void doOkAction() {

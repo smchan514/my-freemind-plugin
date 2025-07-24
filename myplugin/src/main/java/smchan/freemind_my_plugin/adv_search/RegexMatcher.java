@@ -28,7 +28,7 @@ class RegexMatcher implements IMatcher {
     }
 
     @Override
-    public int getMatchScore(String text) {
+    public int getMatchRelevance(String text) {
         Matcher matcher = _pattern.matcher(text);
         int index = 0;
         int count = 0;

@@ -24,8 +24,8 @@ class ExactMatcher implements IMatcher {
     }
 
     @Override
-    public int getMatchScore(String text) {
-        int score = 0;
+    public int getMatchRelevance(String text) {
+        int relevance = 0;
 
         if (!_isCaseSensitive) {
             // Case-insensitive search: convert all text to lowercase
@@ -35,11 +35,11 @@ class ExactMatcher implements IMatcher {
         if (_searchTerm != null) {
             if (text.contains(_searchTerm)) {
                 // If the search term is found as-is, score 10
-                score += 10;
+                relevance += 10;
             }
         }
 
-        return score;
+        return relevance;
     }
 
     @Override
