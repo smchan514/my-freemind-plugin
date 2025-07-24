@@ -23,16 +23,16 @@ dependencies {
 // Ref: https://discuss.gradle.org/t/buildship-1-0-18-is-now-available/19012
 def freemind_src = "../freemind-src-1.0.0.zip";
 if (project.file(freemind_src).exists()) {
-	eclipse {
-	    classpath {
-	        file {
-	            whenMerged {
-	                def lib = entries.find { it.path.contains 'freemind.jar' }
-	                lib.sourcePath = fileReference(file(freemind_src))
-	            }
-	        }
-	    }
-	}
+    eclipse {
+        classpath {
+            file {
+                whenMerged {
+                    def lib = entries.find { it.path.contains 'freemind.jar' }
+                    lib.sourcePath = fileReference(file(freemind_src))
+                }
+            }
+        }
+    }
 }
 
 compileJava {
