@@ -6,7 +6,7 @@ import java.util.List;
 
 import freemind.modes.MindMapNode;
 
-class TreeWalkerDepthFirst implements ITreeWalker {
+public class TreeWalkerDepthFirst implements ITreeWalker {
 
     private MindMapNode[] _nodes;
 
