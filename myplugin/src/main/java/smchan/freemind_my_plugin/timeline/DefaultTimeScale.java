@@ -4,8 +4,6 @@ package smchan.freemind_my_plugin.timeline;
  * Default implementation of {@link ITimeScale} for linear timeline.
  */
 class DefaultTimeScale implements ITimeScale {
-    // 100 years in milliseconds
-    private static final long MAX_TIME_LAPSE_MILLIS = 100L * 365 * 24 * 3600 * 1000L;
     private static final int DEFAULT_WIDTH = 320;
 
     private final long _minTime;
@@ -20,9 +18,15 @@ class DefaultTimeScale implements ITimeScale {
 
     public DefaultTimeScale(long minTime, long maxTime, int widthPixels) {
         assert minTime >= 0;
-        assert minTime < maxTime;
-        assert (maxTime - minTime) < MAX_TIME_LAPSE_MILLIS;
+        assert maxTime >= 0;
         assert widthPixels > 0;
+
+        // Swap min time and max time if inverted
+        if (minTime > maxTime) {
+            long t = maxTime;
+            maxTime = minTime;
+            minTime = t;
+        }
 
         _minTime = minTime;
         _maxTime = maxTime;
