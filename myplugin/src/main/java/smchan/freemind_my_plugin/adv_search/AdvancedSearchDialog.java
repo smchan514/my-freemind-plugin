@@ -308,7 +308,7 @@ class AdvancedSearchDialog extends JDialog {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
         comp = _jrbNewestFirst = jrb = new JRadioButton("Newest first",
-                _lastSearchScoring == SearchScoring.OldestFirst);
+                _lastSearchScoring == SearchScoring.NewestFirst);
         buttonGroup.add(jrb);
         jrb.setMnemonic(MNEMONIC_NEWEST_FIRST);
         panel.add(comp, gbc);
