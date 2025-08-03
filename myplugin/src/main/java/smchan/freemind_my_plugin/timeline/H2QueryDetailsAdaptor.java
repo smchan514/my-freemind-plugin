@@ -18,6 +18,9 @@ class H2QueryDetailsAdaptor implements ITimeScaleChangedListener {
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger
             .getLogger(H2QueryDetailsAdaptor.class.getName());
 
+    private static final int MAX_ENTRIES = 100;
+    private static final String STR_OMITTED_FIELD = "…";
+
     private ITimeScaleSource _timeScaleSource;
     private ITimelineModel<NodeEvent> _timelineModel;
     private ScheduledExecutorService _executor;
@@ -73,12 +76,24 @@ class H2QueryDetailsAdaptor implements ITimeScaleChangedListener {
             stmt.setTimestamp(1, new Timestamp(minTime));
             stmt.setTimestamp(2, new Timestamp(maxTime));
             ResultSet rs = stmt.executeQuery();
+            int entryCount = 0;
             while (rs.next()) {
                 Timestamp ts = rs.getTimestamp(1);
-                String text = rs.getString(2);
-                String nodeId = rs.getString(3);
-                String path = rs.getString(4);
+                String text = STR_OMITTED_FIELD;
+                String nodeId = STR_OMITTED_FIELD;
+                String path = STR_OMITTED_FIELD;
+
+                // Limit retention of detailed info.
+                // Entries without all the details will retain only info
+                // necessary for timeline display, i.e. timestamp.
+                if (entryCount < MAX_ENTRIES) {
+                    text = rs.getString(2);
+                    nodeId = rs.getString(3);
+                    path = rs.getString(4);
+                }
+
                 list.add(new NodeEvent(text, ts.getTime(), path, nodeId));
+                ++entryCount;
             }
 
             // Update UI in AWT event dispatcher
