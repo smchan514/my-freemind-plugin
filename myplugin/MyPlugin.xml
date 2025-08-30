@@ -74,10 +74,19 @@
 		<plugin_menu location="menu_bar/navigate/open_in_explorer"/>
 	</plugin_action>
 	<plugin_action 
+		documentation="Open Linked File in Explorer" 
+		name="Open Link in Explorer"
+		base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/open_link_in_explorer" 
+		key_stroke="shift ctrl F12"
+		class_name="smchan.freemind_my_plugin.OpenLinkedFileInExplorer">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/navigate/open_link_in_explorer"/>
+	</plugin_action>
+	<plugin_action 
 		documentation="Put mindmap full path in clipboard" 
 		name="Put mindmap full path in clipboard" base="freemind.extensions.ModeControllerHookAdapter" 
 		label="plugins/MyPlugin/put_name_in_clipboard" 
-		key_stroke="shift ctrl F12"
 		class_name="smchan.freemind_my_plugin.PutMindMapNameInClipboard">
 		<plugin_mode class_name="freemind.modes.mindmapmode"/>
 		<plugin_menu location="menu_bar/navigate/put_name_in_clipboard"/>

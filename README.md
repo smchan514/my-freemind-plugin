@@ -7,8 +7,8 @@ Added "plugin actions":
 |Insert date stamp                                           | F12               |
 |Insert local time stamp                                     | SHIFT+F12         |
 |Insert UTC date time                                        | SHIFT+ALT+F12     |
-|Open mindmap in Explorer                                    | CTRL+F12          |
-|Put mindmap full path in clipboard                          | CTRL+SHIFT+F12    |
+|Open mindmap in Explorer (Windows)                          | CTRL+F12          |
+|Open linked file in Explorer (Windows)                      | CTRL+SHIFT+F12    |
 |Set cross links in two selected nodes                       | ALT+SHIFT+L       |
 |Insert cross-linked node pair                               | CTRL+SHIFT+L      |
 |Show the most recently used nodes in a dialog               | CTRL+M            |
