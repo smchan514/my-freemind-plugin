@@ -115,7 +115,7 @@ public class InsertRandomString extends ExportHook implements ClipboardOwner {
         assert (minLetters >= 0);
         assert (minDigits >= 0);
         assert (minPuncts >= 0);
-        assert (maxTotal > (minLetters + minDigits + minPuncts));
+        assert (maxTotal >= (minLetters + minDigits + minPuncts));
 
         SecureRandom sr = new SecureRandom();
         sr.setSeed(System.currentTimeMillis());

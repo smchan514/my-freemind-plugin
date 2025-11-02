@@ -25,9 +25,9 @@ public class InsertRandomStringConfigDialog extends JDialog {
     private static final long serialVersionUID = 1L;
     private static final Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
 
-    private static final int NUMBER_TOTAL_MIN = 8;
-    private static final int NUMBER_TOTAL_MAX = 256;
-    private static final int NUMBER_LETTERS_MIN = 8;
+    private static final int NUMBER_TOTAL_MIN = 1;
+    private static final int NUMBER_TOTAL_MAX = 1024;
+    private static final int NUMBER_LETTERS_MIN = 0;
     private static final int NUMBER_LETTERS_MAX = 128;
     private static final int NUMBER_DIGITS_MIN = 0;
     private static final int NUMBER_DIGITS_MAX = 128;
