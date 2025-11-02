@@ -28,11 +28,11 @@ public class InsertRandomStringConfigDialog extends JDialog {
     private static final int NUMBER_TOTAL_MIN = 1;
     private static final int NUMBER_TOTAL_MAX = 1024;
     private static final int NUMBER_LETTERS_MIN = 0;
-    private static final int NUMBER_LETTERS_MAX = 128;
+    private static final int NUMBER_LETTERS_MAX = NUMBER_TOTAL_MAX;
     private static final int NUMBER_DIGITS_MIN = 0;
-    private static final int NUMBER_DIGITS_MAX = 128;
+    private static final int NUMBER_DIGITS_MAX = NUMBER_TOTAL_MAX;
     private static final int NUMBER_PUNCTS_MIN = 0;
-    private static final int NUMBER_PUNCTS_MAX = 128;
+    private static final int NUMBER_PUNCTS_MAX = NUMBER_TOTAL_MAX;
 
     private final int _defaultMaxTotal;
     private final int _defaultMinLetters;

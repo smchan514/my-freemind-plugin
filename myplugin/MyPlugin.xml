@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<!-- [2020-12-22] "menu_bar/insert/insert_utc_date_time" SHIFT-F12 -->
 <plugin	label="plugins/MyPlugin">
 	<plugin_classpath jar="myplugin/myplugin.jar"/>
 	<plugin_classpath jar="myplugin/h2-2.3.232.jar"/>
@@ -65,31 +64,34 @@
 		<plugin_property name="default_min_puncts" value="2"/>
 	</plugin_action>
 	<plugin_action 
-		documentation="Open mindmap in Explorer" 
-		name="Open in Explorer" base="freemind.extensions.ModeControllerHookAdapter" 
+		documentation="Open current mindmap file in Explorer"
+		name="Open MindMap in Explorer"
+		base="freemind.extensions.ModeControllerHookAdapter"
 		label="plugins/MyPlugin/open_in_explorer" 
-		key_stroke="ctrl F12"
+        key_stroke="ctrl alt shift F12"
 		class_name="smchan.freemind_my_plugin.OpenMindMapInExplorer">
 		<plugin_mode class_name="freemind.modes.mindmapmode"/>
 		<plugin_menu location="menu_bar/navigate/open_in_explorer"/>
 	</plugin_action>
 	<plugin_action 
-		documentation="Open Linked File in Explorer" 
+		documentation="Open linked file, if present, in Explorer"
 		name="Open Link in Explorer"
-		base="freemind.extensions.ModeControllerHookAdapter" 
+		base="freemind.extensions.ModeControllerHookAdapter"
 		label="plugins/MyPlugin/open_link_in_explorer" 
-		key_stroke="shift ctrl F12"
+		key_stroke="ctrl F12"
 		class_name="smchan.freemind_my_plugin.OpenLinkedFileInExplorer">
 		<plugin_mode class_name="freemind.modes.mindmapmode"/>
 		<plugin_menu location="menu_bar/navigate/open_link_in_explorer"/>
 	</plugin_action>
 	<plugin_action 
-		documentation="Put mindmap full path in clipboard" 
-		name="Put mindmap full path in clipboard" base="freemind.extensions.ModeControllerHookAdapter" 
+		documentation="Put full path to selected node in clipboard"
+		name="Copy Node Path"
+		base="freemind.extensions.ModeControllerHookAdapter"
 		label="plugins/MyPlugin/put_name_in_clipboard" 
+		key_stroke="ctrl shift F12"
 		class_name="smchan.freemind_my_plugin.PutMindMapNameInClipboard">
 		<plugin_mode class_name="freemind.modes.mindmapmode"/>
-		<plugin_menu location="menu_bar/navigate/put_name_in_clipboard"/>
+		<plugin_menu location="menu_bar/edit/put_name_in_clipboard"/>
 	</plugin_action>
 	<plugin_action 
 		documentation="Set cross links in two selected nodes" 
