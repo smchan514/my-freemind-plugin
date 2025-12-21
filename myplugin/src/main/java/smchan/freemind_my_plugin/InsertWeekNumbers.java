@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import javax.swing.JOptionPane;
+
 import freemind.controller.actions.generated.instance.CompoundAction;
 import freemind.controller.actions.generated.instance.DeleteNodeAction;
 import freemind.controller.actions.generated.instance.EditNodeAction;
@@ -19,18 +21,11 @@ public class InsertWeekNumbers extends ExportHook {
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger
             .getLogger(InsertWeekNumbers.class.getName());
 
-    // Per ISO-8601, the first week has at least four (4) days in it
+    // Per ISO 8601, the first week has at least four (4) days in it
     private static final int DEFAULT_MIN_DAYS_IN_FIRST_WEEK = 4;
 
-    // Plugin resource name
-    private static final String RES_KEY_MIN_DAYS_IN_FIRST_WEEK = "min_days_in_first_week";
-
-    ////////////////////////////////////////////////////////////
-    // Configurations
-
-    private boolean _initialized = false;
-
-    private int _minDaysInFirstWeek = DEFAULT_MIN_DAYS_IN_FIRST_WEEK;
+    // Per ISO 8601, the first day of the week is Monday
+    private static final int FIRST_DAT_OF_WEEK = Calendar.MONDAY;
 
     public InsertWeekNumbers() {
         // ...
@@ -39,11 +34,6 @@ public class InsertWeekNumbers extends ExportHook {
     @Override
     public void startupMapHook() {
         super.startupMapHook();
-
-        // Lazy init
-        if (!_initialized) {
-            performInit();
-        }
 
         // Get user input from a modal dialog
         InsertWeekNumbersDialog dialog = new InsertWeekNumbersDialog();
@@ -57,20 +47,19 @@ public class InsertWeekNumbers extends ExportHook {
         int firstWeek = dialog.getFirstWeek();
         boolean separateByQuarters = dialog.getSeparateByQuarters();
 
-        WeekModel[] weekModels = generateWeekModels(year, firstWeek);
+        try {
+            WeekModel[] weekModels = generateWeekModels(year, firstWeek);
 
-        // Add new nodes (with undo in one step)
-        addNewNodes(weekModels, separateByQuarters);
-    }
-
-    private void performInit() {
-        String str;
-
-        if ((str = getResourceString(RES_KEY_MIN_DAYS_IN_FIRST_WEEK)) != null) {
-            _minDaysInFirstWeek = Integer.parseInt(str);
+            // Add new nodes (with undo in one step)
+            addNewNodes(weekModels, separateByQuarters);
+        } catch (IllegalArgumentException e) {
+            // Catch the IllegalArgumentException raised by Calendar which has no message
+            JOptionPane.showMessageDialog(getController().getFrame().getJFrame(), "Invalid input values", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(getController().getFrame().getJFrame(), e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
-
-        _initialized = true;
     }
 
     private void addNewNodes(WeekModel[] nodeModels, boolean separateByQuarters) {
@@ -162,36 +151,33 @@ public class InsertWeekNumbers extends ExportHook {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar cal = Calendar.getInstance();
 
-        cal.setMinimalDaysInFirstWeek(_minDaysInFirstWeek);
+        // Use non-lenient calendar to detect invalid input values
+        cal.setLenient(false);
 
-        cal.set(Calendar.YEAR, year);
-        cal.set(Calendar.WEEK_OF_YEAR, firstWeek);
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        // Configure calendar
+        cal.setMinimalDaysInFirstWeek(DEFAULT_MIN_DAYS_IN_FIRST_WEEK);
+        cal.setFirstDayOfWeek(FIRST_DAT_OF_WEEK);
+
+        // Set starting year/week to get total number of weeks for the year
+        cal.setWeekDate(year, firstWeek, FIRST_DAT_OF_WEEK);
         Date startdate = cal.getTime();
+        int totalWeeks = cal.getWeeksInWeekYear();
 
-        LOGGER.info("startdate=" + startdate);
+        LOGGER.info("startdate=" + startdate + ", totalWeeks=" + totalWeeks);
 
-        // Get the week number: starts at 1
-        int thisWeek = cal.get(Calendar.WEEK_OF_YEAR);
-        int lastWeek = 0;
-
-        do {
+        // For all the week numbers, inclusive of the last one...
+        for (int thisWeek = firstWeek; thisWeek <= totalWeeks; thisWeek++) {
             int quarter = getQauter(thisWeek);
 
-            // Get the first day of the week
+            // Get the date for the first day of the week
+            cal.setWeekDate(year, thisWeek, FIRST_DAT_OF_WEEK);
             Date date = cal.getTime();
 
             // Insert the node texts
             String textWeek = String.format("[%s] wk%02d", sdf.format(date), thisWeek);
             String textQuarter = String.format("Q%d", quarter);
             lst.add(new WeekModel(textQuarter, textWeek));
-
-            // Move up 7 days
-            cal.add(Calendar.DAY_OF_MONTH, 7);
-
-            lastWeek = thisWeek;
-            thisWeek = cal.get(Calendar.WEEK_OF_YEAR);
-        } while (cal.get(Calendar.YEAR) <= year && thisWeek > lastWeek);
+        }
 
         return lst.toArray(new WeekModel[0]);
     }
