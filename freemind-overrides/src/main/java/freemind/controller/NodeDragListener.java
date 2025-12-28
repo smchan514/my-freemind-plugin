@@ -58,14 +58,17 @@ public class NodeDragListener implements DragGestureListener {
 		}
 	}
 
-	public void dragGestureRecognized(DragGestureEvent e) {
-		if (!Resources.getInstance().getBoolProperty("draganddrop"))
-			return;
+	@Override
+    public void dragGestureRecognized(DragGestureEvent e) {
+		if (!Resources.getInstance().getBoolProperty("draganddrop")) {
+            return;
+        }
 
 		MindMapNode node = ((MainView) e.getComponent()).getNodeView()
 				.getModel();
-		if (node.isRoot())
-			return;
+		if (node.isRoot()) {
+            return;
+        }
 
 		// Transferable t; // = new StringSelection("");
 		String dragAction = "MOVE";
@@ -78,12 +81,20 @@ public class NodeDragListener implements DragGestureListener {
 				&& e.getTriggerEvent().isMetaDown();
 		boolean otherOsLinkAction = (modifiersEx & InputEvent.BUTTON3_DOWN_MASK) != 0;
 		if (macLinkAction || otherOsLinkAction) {
+            if (!Resources.getInstance().getBoolProperty("enable_drag_action_link")) {
+                // [2025-12-28] Proceed with drag action only if configured in auto.properties
+                return;
+            }
 			// Change drag action
 			cursor = DragSource.DefaultLinkDrop;
 			dragAction = "LINK";
 		}
 
 		if ((modifiersEx & InputEvent.BUTTON2_DOWN_MASK) != 0) {
+            if (!Resources.getInstance().getBoolProperty("enable_drag_action_copy")) {
+                // [2025-12-28] Proceed with drag action only if configured in auto.properties
+                return;
+            }
 			// Change drag action
 			cursor = DragSource.DefaultCopyDrop;
 			dragAction = "COPY";
@@ -98,20 +109,25 @@ public class NodeDragListener implements DragGestureListener {
 		// DragSource dragSource = DragSource.getDefaultDragSource();
 
 		e.startDrag(cursor, t, new DragSourceListener() {
-			public void dragDropEnd(DragSourceDropEvent dsde) {
+			@Override
+            public void dragDropEnd(DragSourceDropEvent dsde) {
 
 			}
 
-			public void dragEnter(DragSourceDragEvent e) {
+			@Override
+            public void dragEnter(DragSourceDragEvent e) {
 			}
 
-			public void dragExit(DragSourceEvent dse) {
+			@Override
+            public void dragExit(DragSourceEvent dse) {
 			}
 
-			public void dragOver(DragSourceDragEvent dsde) {
+			@Override
+            public void dragOver(DragSourceDragEvent dsde) {
 			}
 
-			public void dropActionChanged(DragSourceDragEvent dsde) {
+			@Override
+            public void dropActionChanged(DragSourceDragEvent dsde) {
 				dsde.getDragSourceContext().setCursor(
 						getCursorByAction(dsde.getUserAction()));
 			}

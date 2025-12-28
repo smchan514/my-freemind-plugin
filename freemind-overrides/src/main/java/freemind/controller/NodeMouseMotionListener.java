@@ -24,6 +24,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import freemind.main.Resources;
+
 /**
  * The MouseMotionListener which belongs to every NodeView
  */
@@ -41,8 +43,12 @@ public class NodeMouseMotionListener implements MouseMotionListener,
 
 	private NodeMouseMotionObserver mListener;
 
+    private boolean _processMouseButton2Events;
+
 	public NodeMouseMotionListener(Controller controller) {
 		c = controller;
+        _processMouseButton2Events = Resources.getInstance()
+                .getBoolProperty("process_mouse_button2_events_in_NodeMouseMotionListener");
 	}
 
 	public void register(NodeMouseMotionObserver listener) {
@@ -54,44 +60,91 @@ public class NodeMouseMotionListener implements MouseMotionListener,
 		mListener = null;
 	}
 
-	public void mouseClicked(MouseEvent e) {
-		if (mListener != null)
-			mListener.mouseClicked(e);
+	@Override
+    public void mouseClicked(MouseEvent e) {
+        if (!_processMouseButton2Events && e.getButton() == MouseEvent.BUTTON2) {
+            // [2025-12-28] Process mouse button2 only if configured
+	        return;
+	    }
+		if (mListener != null) {
+            mListener.mouseClicked(e);
+        }
 	}
 
-	public void mouseDragged(MouseEvent e) {
-		if (mListener != null)
-			mListener.mouseDragged(e);
+	@Override
+    public void mouseDragged(MouseEvent e) {
+        if (!_processMouseButton2Events && (e.getModifiersEx() & MouseEvent.BUTTON2_DOWN_MASK) != 0) {
+            // [2025-12-28] Process mouse button2 only if configured
+            // Use e.getModifiersEx() to test mouse button because e.getButton() seems to
+            // always return 0 in MouseMotionListener methods.
+            return;
+        }
+		if (mListener != null) {
+            mListener.mouseDragged(e);
+        }
 	}
 
-	public void mouseEntered(MouseEvent e) {
-		if (mListener != null)
-			mListener.mouseEntered(e);
+	@Override
+    public void mouseEntered(MouseEvent e) {
+        if (!_processMouseButton2Events && e.getButton() == MouseEvent.BUTTON2) {
+            // [2025-12-28] Process mouse button2 only if configured
+            return;
+        }
+		if (mListener != null) {
+            mListener.mouseEntered(e);
+        }
 	}
 
-	public void mouseExited(MouseEvent e) {
-		if (mListener != null)
-			mListener.mouseExited(e);
+	@Override
+    public void mouseExited(MouseEvent e) {
+        if (!_processMouseButton2Events && e.getButton() == MouseEvent.BUTTON2) {
+            // [2025-12-28] Process mouse button2 only if configured
+            return;
+        }
+		if (mListener != null) {
+            mListener.mouseExited(e);
+        }
 	}
 
-	public void mouseMoved(MouseEvent e) {
-		if (mListener != null)
-			mListener.mouseMoved(e);
+	@Override
+    public void mouseMoved(MouseEvent e) {
+        if (!_processMouseButton2Events && (e.getModifiersEx() & MouseEvent.BUTTON2_DOWN_MASK) != 0) {
+            // [2025-12-28] Process mouse button2 only if configured
+            // Use e.getModifiersEx() to test mouse button because e.getButton() seems to
+            // always return 0 in MouseMotionListener methods.
+            return;
+        }
+		if (mListener != null) {
+            mListener.mouseMoved(e);
+        }
 	}
 
-	public void mousePressed(MouseEvent e) {
-		if (mListener != null)
-			mListener.mousePressed(e);
+	@Override
+    public void mousePressed(MouseEvent e) {
+        if (!_processMouseButton2Events && e.getButton() == MouseEvent.BUTTON2) {
+            // [2025-12-28] Process mouse button2 only if configured
+            return;
+        }
+		if (mListener != null) {
+            mListener.mousePressed(e);
+        }
 	}
 
-	public void mouseReleased(MouseEvent e) {
-		if (mListener != null)
-			mListener.mouseReleased(e);
+	@Override
+    public void mouseReleased(MouseEvent e) {
+        if (!_processMouseButton2Events && e.getButton() == MouseEvent.BUTTON2) {
+            // [2025-12-28] Process mouse button2 only if configured
+            return;
+        }
+		if (mListener != null) {
+            mListener.mouseReleased(e);
+        }
 	}
 
 	public void updateSelectionMethod() {
-		if (mListener != null)
-			mListener.updateSelectionMethod();
+		if (mListener != null) {
+            mListener.updateSelectionMethod();
+        }
 	}
 
 }

@@ -16,10 +16,10 @@
 [2024-11-24]
     Modified freemind.modes.mindmapmode.actions.ToggleFoldedAction to indicate
     map change when "resources_save_folding_state=false" in auto.properties so
-    that FreeMind will allow the map to be saved 
+    that FreeMind will allow the map to be saved. 
 
 [2024-12-01]
-    Provide optional support for FlatLaf look and feels (including FlatDarkLaf)
+    Provide optional support for FlatLaf look and feels (including FlatDarkLaf).
 
 [2024-12-01]
     Removed modifications to freemind.main.FreeMind from [2023-05-04] due to
@@ -39,7 +39,7 @@
 [2024-12-12]
     Related to changes in 2024-12-05, modified
     accessories.plugins.HierarchicalIcons to reduce delay when closing a mind
-    map or Freemind
+    map or Freemind.
 
 [2025-01-22]
     Add keyboard shortcut configuration for "Save All" by adding the attribute
@@ -51,11 +51,24 @@
 
 [2025-01-24]
     Override freemind.modes.ControllerAdapter to use simple HTML converter
-    for better Teams / Office compatibility
+    for better Teams / Office compatibility.
     
 [2025-01-31]
     Modified freemind.view.mindmapview.MapView to disable catch NPE in method
     selectAsTheOnlyOneSelected(), which could prevent the application from
-    saving and exiting
-
+    saving and exiting.
+    
+[2025-12-28]
+    - Override accessories.plugins.UnfoldAll to process middle mouse wheel
+      fold/unfold only when "enable_mouse_wheel_fold_unfold" is set to true in
+      auto.properties, set to false by default.
+    - Override freemind.controller.NodeDragListener to process drag action
+      COPY with mouse button2 (mouse wheel button) only when 
+      "enable_drag_action_copy" is set to true in auto.properties, set to false
+      by default. Same for drag action LINK with mouse button3 (right click)
+      and "enable_drag_action_link".
+    - Override freemind.controller.NodeMouseMotionListener to process remaining
+      mouse button2 event only when
+      "process_mouse_button2_events_in_NodeMouseMotionListener" is set to true
+      in auto.properties, set to false by default.
 #EOF
