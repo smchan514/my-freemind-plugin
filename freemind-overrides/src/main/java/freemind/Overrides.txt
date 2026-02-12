@@ -71,4 +71,9 @@
       mouse button2 event only when
       "process_mouse_button2_events_in_NodeMouseMotionListener" is set to true
       in auto.properties, set to false by default.
+
+[2026-02-11]
+    Override freemind.main.FreeMind to stop calling System.setSecurityManager()
+    which has been deprecated since Java 17 and is raising exception since
+    Java 21.
 #EOF
