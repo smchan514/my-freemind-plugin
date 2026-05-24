@@ -18,6 +18,7 @@ import freemind.modes.mindmapmode.MindMapController;
 import freemind.view.MapModule;
 import smchan.freemind_my_plugin.NodePath;
 import smchan.freemind_my_plugin.NodePathUtil;
+import smchan.freemind_my_plugin.adv_search.AdvancedSearchDialog.IconDecoration;
 import smchan.freemind_my_plugin.adv_search.AdvancedSearchDialog.SearchScope;
 import smchan.freemind_my_plugin.adv_search.AdvancedSearchDialog.SearchScoring;
 
@@ -60,10 +61,11 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
         int maxResults = dlg.getMaxResults();
         SearchScope searchScope = dlg.getSearchScope();
         SearchScoring searchScoring = dlg.getSearchScoring();
+        IconDecoration iconDecoration = dlg.getIconDecoration();
 
         try {
             performSearch(frame, searchTerm, isCaseSensitive, isRegexSearch, isExactMatch, isSearchInLinks, maxResults,
-                    searchScope, searchScoring);
+                    searchScope, searchScoring, iconDecoration);
         } catch (Exception e) {
             String title = "Search failed";
             JOptionPane.showMessageDialog(dlg, "<html><body><pre>" + e.getMessage(), title, JOptionPane.ERROR_MESSAGE);
@@ -72,7 +74,7 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
 
     private void performSearch(JFrame frame, String searchTerm, boolean isCaseSensitive, boolean isRegexSearch,
             boolean isExactMatch, boolean isSearchInLinks, int maxResults, SearchScope searchScope,
-            SearchScoring searchScoring) {
+            SearchScoring searchScoring, IconDecoration iconDecoration) {
         // Select search scope
         MindMapController mmc = (MindMapController) getController();
         MindMapNode[] nodes;
@@ -101,6 +103,24 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
             matcher = new WordsMatcher(searchTerm, isCaseSensitive);
         }
 
+        // Matcher for icon decoration
+        IMatcherIcon matcherIcon;
+        switch (iconDecoration) {
+        case ZeroIcon:
+            matcherIcon = new MatcherIconZero();
+            break;
+        case AtLeastOneIcon:
+            matcherIcon = new MatcherIconAtLeastOne();
+            break;
+        case HasIconForward:
+            matcherIcon = new MatcherIconHasForward();
+            break;
+        case DontCare:
+        default:
+            matcherIcon = new MatcherIconDontCare();
+            break;
+        }
+
         // Fixed search orientation
         ITreeWalker treeWalker = new TreeWalkerDepthFirst(nodes);
 
@@ -125,6 +145,11 @@ public class AdvancedSearch extends ModeControllerHookAdapter {
         int totalCount = 0;
         for (MindMapNode node : treeWalker) {
             String text = extractTextFromNode(node, isSearchInLinks);
+
+            // Skip to the next node if the icon decoration doesn't match
+            if (!matcherIcon.hasMatch(node)) {
+                continue;
+            }
 
             // Compute the score for the specified node
             int relevance = matcher.getMatchRelevance(text);

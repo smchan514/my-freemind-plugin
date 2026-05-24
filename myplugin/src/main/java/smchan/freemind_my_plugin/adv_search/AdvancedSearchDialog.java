@@ -46,6 +46,14 @@ class AdvancedSearchDialog extends JDialog {
         NewestFirst
     }
 
+    public enum IconDecoration {
+        DontCare,
+        ZeroIcon,
+        AtLeastOneIcon,
+        // [2026-05-24] Shortcut to select TODO nodes
+        HasIconForward,
+    }
+
     private static final long serialVersionUID = 1L;
     private static final Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
     private static final Insets CHECKBOX_INSETS = new Insets(1, 5, 1, 5);
@@ -55,12 +63,16 @@ class AdvancedSearchDialog extends JDialog {
     private static final char MNEMONIC_CURRENT_MIND_MAP = 'E';
     private static final char MNEMONIC_FROM_SELECTED_NODES = 'F';
     private static final char MNEMONIC_SEARCH_IN_LINKS = 'K';
+    private static final char MNEMONIC_AT_LEAST_ONE_ICON = 'L';
     private static final char MNEMONIC_NEWEST_FIRST = 'N';
     private static final char MNEMONIC_OLDEST_FIRST = 'O';
     private static final char MNEMONIC_REGULAR_EXPRESSION = 'R';
     private static final char MNEMONIC_SEARCH_TERM = 'S';
+    private static final char MNEMONIC_ICON_DONT_CARE = 'T';
     private static final char MNEMONIC_RELEVANCE = 'V';
+    private static final char MNEMONIC_HAS_ICON_FORWARD = 'W';
     private static final char MNEMONIC_EXACT_MATCH = 'X';
+    private static final char MNEMONIC_ZERO_ICON = 'Z';
 
     private static String _lastSearchTerm = "";
     private static boolean _lastCaseSensitive = false;
@@ -70,6 +82,7 @@ class AdvancedSearchDialog extends JDialog {
     private static int _lastMaxResults = 50;
     private static SearchScope _lastSearchScope = SearchScope.SearchCurrentMindMap;
     private static SearchScoring _lastSearchScoring = SearchScoring.Relevance;
+    private static IconDecoration _lastIconDecoration = IconDecoration.DontCare;
 
     private JButton _jbOK;
     private JTextField _jtfSearchTerm;
@@ -84,6 +97,10 @@ class AdvancedSearchDialog extends JDialog {
     private JRadioButton _jrbNewestFirst;
     private JRadioButton _jrbOldestFirst;
     private JSpinField _jsfMaxResults;
+    private JRadioButton _jrbIconDontCare;
+    private JRadioButton _jrbZeroIcon;
+    private JRadioButton _jrbAtLeastOneIcon;
+    private JRadioButton _jrbHasIconForward;
 
     private boolean _confirmed;
 
@@ -178,6 +195,12 @@ class AdvancedSearchDialog extends JDialog {
         gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.NORTHEAST;
         comp = createPanelSearchOrientation();
+        panel.add(comp, gbc);
+
+        ///////////////////////
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.NORTHEAST;
+        comp = createPanelIconDecoration();
         panel.add(comp, gbc);
 
         ///////////////////////
@@ -316,6 +339,69 @@ class AdvancedSearchDialog extends JDialog {
         return panel;
     }
 
+    private JComponent createPanelIconDecoration() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder("Icon:"));
+        ButtonGroup buttonGroup;
+        JComponent comp;
+        JRadioButton jrb;
+        GridBagConstraints gbc;
+
+        buttonGroup = new ButtonGroup();
+
+        ///////////////////////
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = CHECKBOX_INSETS;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        comp = _jrbIconDontCare = jrb = new JRadioButton("Don't care", _lastIconDecoration == IconDecoration.DontCare);
+        buttonGroup.add(jrb);
+        jrb.setMnemonic(MNEMONIC_ICON_DONT_CARE);
+        panel.add(comp, gbc);
+
+        ///////////////////////
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = CHECKBOX_INSETS;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        comp = _jrbZeroIcon = jrb = new JRadioButton("Zero icon", _lastIconDecoration == IconDecoration.ZeroIcon);
+        buttonGroup.add(jrb);
+        jrb.setMnemonic(MNEMONIC_ZERO_ICON);
+        panel.add(comp, gbc);
+
+        ///////////////////////
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = CHECKBOX_INSETS;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        comp = _jrbAtLeastOneIcon = jrb = new JRadioButton("At least one",
+                _lastIconDecoration == IconDecoration.AtLeastOneIcon);
+        buttonGroup.add(jrb);
+        jrb.setMnemonic(MNEMONIC_AT_LEAST_ONE_ICON);
+        panel.add(comp, gbc);
+
+        ///////////////////////
+        gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = CHECKBOX_INSETS;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        comp = _jrbHasIconForward = jrb = new JRadioButton("Has Icon =>",
+                _lastIconDecoration == IconDecoration.HasIconForward);
+        buttonGroup.add(jrb);
+        jrb.setMnemonic(MNEMONIC_HAS_ICON_FORWARD);
+        panel.add(comp, gbc);
+
+        return panel;
+    }
+
     private JComponent createPanelSearchScope() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Scope:"));
@@ -432,6 +518,23 @@ class AdvancedSearchDialog extends JDialog {
         }
 
         return _lastSearchScoring;
+    }
+
+    public IconDecoration getIconDecoration() {
+        if (_jrbIconDontCare.isSelected()) {
+            _lastIconDecoration = IconDecoration.DontCare;
+        } else if (_jrbZeroIcon.isSelected()) {
+            _lastIconDecoration = IconDecoration.ZeroIcon;
+        } else if (_jrbAtLeastOneIcon.isSelected()) {
+            _lastIconDecoration = IconDecoration.AtLeastOneIcon;
+        } else if (_jrbHasIconForward.isSelected()) {
+            _lastIconDecoration = IconDecoration.HasIconForward;
+        } else {
+            // Default
+            _lastIconDecoration = IconDecoration.DontCare;
+        }
+
+        return _lastIconDecoration;
     }
 
     void doOkAction() {
