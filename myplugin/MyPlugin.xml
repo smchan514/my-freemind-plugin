@@ -128,7 +128,15 @@
 		class_name="smchan.freemind_my_plugin.ShowMRUNodes">
 		<plugin_mode class_name="freemind.modes.mindmapmode"/>
 		<plugin_menu location="menu_bar/view/show_mru_nodes"/>
-		<plugin_property name="nbr_mru_elements" value="25"/>
+	</plugin_action>
+	<plugin_action 
+		documentation="Pin currently selected nodes in MRUNodes dialog" 
+		name="Pin nodes in MRUNodes" base="freemind.extensions.ModeControllerHookAdapter" 
+		label="plugins/MyPlugin/pin_mru_nodes" 
+		key_stroke="ctrl shift M"
+		class_name="smchan.freemind_my_plugin.PinMRUNodes">
+		<plugin_mode class_name="freemind.modes.mindmapmode"/>
+		<plugin_menu location="menu_bar/view/pin_mru_nodes"/>
 	</plugin_action>
 	<plugin_action
 		documentation="Toggle word cases"

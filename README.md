@@ -13,6 +13,7 @@ Added "plugin actions":
 |Set cross links in two selected nodes                       | ALT+SHIFT+L       |
 |Insert cross-linked node pair                               | CTRL+SHIFT+L      |
 |Show the most recently used nodes in a dialog               | CTRL+M            |
+|Pin currently selected nodes in MRUNodes dialog             | CTRL+SHIFT+M      |
 |Toggle word cases: "UPPER CASE", "lower case", "Title Case" | SHIFT+F3          |
 |Normalize white space in node text                          | CTRL+SHIFT+F3     |
 |Edit encrypted attribute `__ENC__` of the selected node<sup>(1)</sup> | SHIFT+F2          |

@@ -41,8 +41,9 @@ public class MRUNodesModel extends AbstractListModel<MindMapNode>
 
     public void putNode(MindMapNode node) {
         // Skip the rest if MRU inhibited
-        if (_inhibitMRU)
+        if (_inhibitMRU) {
             return;
+        }
 
         if (_lstPinnedNodes.contains(node)) {
             // Do nothing if the node is already pinned
@@ -55,8 +56,9 @@ public class MRUNodesModel extends AbstractListModel<MindMapNode>
 
     public void removeNode(MindMapNode node) {
         // Skip the rest if MRU inhibited
-        if (_inhibitMRU)
+        if (_inhibitMRU) {
             return;
+        }
 
         if (removePinnedNode(node)) {
             // Pinned node removed
@@ -86,8 +88,9 @@ public class MRUNodesModel extends AbstractListModel<MindMapNode>
 
     public void selectNode(MindMapNode node) {
         // Verify inputs
-        if (_controller == null || node == null)
+        if (_controller == null || node == null) {
             return;
+        }
 
         try {
             _inhibitMRU = true;
@@ -130,6 +133,17 @@ public class MRUNodesModel extends AbstractListModel<MindMapNode>
 
     public boolean isNodePinned(MindMapNode node) {
         return _lstPinnedNodes.contains(node);
+    }
+
+    public void setPinStatus(MindMapNode node) {
+        if (_lstPinnedNodes.contains(node)) {
+            // Node already pinned, nothing to do
+            return;
+        }
+
+        // Put the node in the MRU list and mark it as pinned
+        putNode(node);
+        togglePinStatus(node);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

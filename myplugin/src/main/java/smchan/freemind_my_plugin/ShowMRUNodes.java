@@ -6,18 +6,15 @@ import javax.swing.JFrame;
 
 import freemind.extensions.ModeControllerHookAdapter;
 import smchan.freemind_my_plugin.mru.MRUNodesModel;
+import smchan.freemind_my_plugin.mru.MRUNodesModelAccessor;
 import smchan.freemind_my_plugin.mru.MRUNodesView;
 
 /**
  * Show the most recently used mindmap nodes.
  */
 public class ShowMRUNodes extends ModeControllerHookAdapter {
-    private static final int DEFAULT_NBR_MRU_ELEMENTS = 25;
-
-    // Shared global instances of MRU nodes model and view
-    private static boolean _initialized = false;
+    // Shared global instances of MRU nodes view
     private static MRUNodesView _mruView;
-    private static MRUNodesModel _mruModel;
 
     public ShowMRUNodes() {
         // ...
@@ -27,14 +24,15 @@ public class ShowMRUNodes extends ModeControllerHookAdapter {
     public void startupMapHook() {
         super.startupMapHook();
 
-        if (!_initialized) {
-            performInit();
-        }
-
+        // Lazy init MRUNodesView
         if (_mruView == null || !_mruView.isVisible()) {
+            // Get access to the global instance of MRUNodesModel
+            // which is shared with other HookAdapter
+            MRUNodesModel mruModel = MRUNodesModelAccessor.getMRUNodesModel(getController().getFrame().getController());
+
             JFrame owner = getController().getFrame().getJFrame();
             _mruView = new MRUNodesView(owner);
-            _mruView.setMRUNodesModel(_mruModel);
+            _mruView.setMRUNodesModel(mruModel);
 
             _mruView.pack();
 
@@ -49,22 +47,5 @@ public class ShowMRUNodes extends ModeControllerHookAdapter {
         } else {
             _mruView.requestFocus();
         }
-    }
-
-    /**
-     * Perform initialization of this action
-     */
-    private void performInit() {
-        int nbrMruElements = DEFAULT_NBR_MRU_ELEMENTS;
-        String str;
-
-        if ((str = getResourceString("nbr_mru_elements")) != null)
-            nbrMruElements = Integer.parseInt(str);
-
-        // Create the model and connect it to the data sources
-        _mruModel = new MRUNodesModel(nbrMruElements);
-        _mruModel.setController(getController().getFrame().getController());
-
-        _initialized = true;
     }
 }
