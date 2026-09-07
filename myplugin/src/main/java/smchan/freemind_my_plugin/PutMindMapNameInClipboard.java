@@ -6,6 +6,8 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.swing.JOptionPane;
 
@@ -74,6 +76,111 @@ public class PutMindMapNameInClipboard extends ExportHook implements ClipboardOw
         sb.append(filePath);
         sb.append('#');
         sb.append(modeController.getNodeID(node));
+        return sb.toString();
+    }
+
+    /**
+     * Get the relative URL from the source Node to the target Node, if possible.
+     * Otherwise, return the absolute URL to the target Node.
+     * 
+     * @param  source a non-null instance of {@link MindMapNode}
+     * @param  target a non-null instance of {@link MindMapNode}
+     * @return        URL to the argument node as a string
+     */
+    public static String getRelativePathToNode(MindMapNode source, MindMapNode target) {
+        assert (source != null);
+        assert (target != null);
+
+        File srcFile = source.getMap().getFile();
+        if (srcFile == null) {
+            throw new RuntimeException("Unable to get mindmap file name of the source node (probably not saved yet?)");
+        }
+
+        File tgtFile = target.getMap().getFile();
+        if (tgtFile == null) {
+            throw new RuntimeException("Unable to get mindmap file name of the target node (probably not saved yet?)");
+        }
+
+        String relPath = getRelativePathToTarget(srcFile, tgtFile);
+
+        // Failed to get relative path
+        if (relPath == null) {
+            // Return the full URL to target node
+            return getFullPathToNode(target);
+        }
+
+        // Perform HTML escape to support file path containing space characters
+        String filePath = escapeFilePath(relPath.toString());
+
+        ModeController modeController = target.getMap().getModeController();
+
+        // Convert the filePath to point to the target node
+        StringBuilder sb = new StringBuilder();
+        sb.append(filePath);
+        sb.append('#');
+        sb.append(modeController.getNodeID(target));
+        return sb.toString();
+    }
+
+    /**
+     * Get the relative path from the source File to the target File.
+     * 
+     * Instead of using {@link Path#relativize(Path)}, we implement our own relative
+     * path algorithm here simply to use the cross-platform path separator '/', so
+     * that the cross-links in the mindmaps can work on Windows and on Linux.
+     * 
+     * @param  source a non-null instance of {@link File} which can be a file or a
+     *                directory
+     * @param  target a non-null instance of {@link File}, which can be a file or a
+     *                directory
+     * @return        String representation of the relative path, or null if there
+     *                is no reasonable relative path from source to target
+     */
+    private static String getRelativePathToTarget(File source, File target) {
+        assert source != null : "source cannot be null";
+        assert target != null : "target cannot be null";
+        assert target.isFile() : "target must be a directory";
+
+        if (source.isFile()) {
+            // Source is a file, get its parent directory
+            source = source.getParentFile();
+        }
+
+        Path srcPath = Paths.get(source.getAbsolutePath());
+        Path tgtPath = Paths.get(target.getAbsolutePath());
+
+        // Not the same root (drive letter in Windows), no reasonable relative path
+        // from source to target
+        if (!srcPath.getRoot().equals(tgtPath.getRoot())) {
+            return null;
+        }
+
+        // Find the common parent directory
+        int len = Math.min(srcPath.getNameCount(), tgtPath.getNameCount());
+        int commonIndex = 0;
+        for (; commonIndex < len; commonIndex++) {
+            if (!srcPath.getName(commonIndex).equals(tgtPath.getName(commonIndex))) {
+                break;
+            }
+        }
+
+        // Construct the relative path
+        StringBuilder sb = new StringBuilder();
+
+        // Travel from source up to commonIndex
+        for (int i = srcPath.getNameCount(); i > commonIndex; i--) {
+            sb.append("../");
+        }
+
+        // Travel from commonIndex down to target's parent
+        for (int i = commonIndex; i < tgtPath.getNameCount() - 1; i++) {
+            sb.append(tgtPath.getName(i).toString());
+            sb.append("/");
+        }
+
+        // Add the target itself
+        sb.append(tgtPath.getName(tgtPath.getNameCount() - 1).toString());
+
         return sb.toString();
     }
 

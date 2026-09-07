@@ -174,7 +174,8 @@ public class MRUNodesView extends JDialog {
     }
 
     private void performTransaction(MindMapController mmc, MindMapNode nodeSrc, MindMapNode nodeDst) {
-        XmlAction editAction = createEditAction(mmc, nodeSrc, PutMindMapNameInClipboard.getFullPathToNode(nodeDst));
+        XmlAction editAction = createEditAction(mmc, nodeSrc,
+                PutMindMapNameInClipboard.getRelativePathToNode(nodeSrc, nodeDst));
         XmlAction undoAction = createUndoAction(mmc, nodeSrc);
         mmc.doTransaction("mmc1", new ActionPair(editAction, undoAction));
         // Find a better way to trigger update of file change indicator...
