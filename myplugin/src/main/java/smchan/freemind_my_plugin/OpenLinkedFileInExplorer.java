@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import freemind.extensions.ExportHook;
@@ -15,6 +16,10 @@ import freemind.modes.MindMapNode;
  */
 public class OpenLinkedFileInExplorer extends ExportHook {
     private static final String DEFAULT_ENCDOING = "utf-8";
+    private static final String SYS_PROP_OS_NAME = "os.name";
+    private static final String OS_NAME_WINDOWS = "WINDOWS";
+    private static final String OS_NAME_LINUX = "LINUX";
+    private static final String OS_NAME_MAC = "MAC";
 
     public OpenLinkedFileInExplorer() {
         // ...
@@ -36,8 +41,8 @@ public class OpenLinkedFileInExplorer extends ExportHook {
         String link = selectedNode.getLink();
 
         if (link == null) {
-            JOptionPane.showMessageDialog(getController().getFrame().getJFrame(),
-                    "Node has no link", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(getController().getFrame().getJFrame(), "Node has no link", "Error",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -57,7 +62,7 @@ public class OpenLinkedFileInExplorer extends ExportHook {
 
         // If we managed to resolve the link
         if (path != null) {
-            openExplorer(path);
+            openExplorer(getController().getFrame().getJFrame(), path);
         } else {
             JOptionPane.showMessageDialog(getController().getFrame().getJFrame(),
                     "Unable to resolve link to local file: " + link, "Error", JOptionPane.ERROR_MESSAGE);
@@ -84,11 +89,31 @@ public class OpenLinkedFileInExplorer extends ExportHook {
         return null;
     }
 
-    private void openExplorer(File file) {
+    /**
+     * Show a file in the platform-specific file manager
+     * 
+     * @param frameParent Application JFrame, to be used as parent for error dialog
+     * @param file        a non-null instance of File to show
+     */
+    static void openExplorer(JFrame frameParent, File file) {
+        // Case-insensitive comparison of OS name prefix
+        String valOsName = System.getProperty(SYS_PROP_OS_NAME).toUpperCase();
+        if (valOsName.startsWith(OS_NAME_WINDOWS)) {
+            openWindowsExplorer(frameParent, file);
+        } else if (valOsName.startsWith(OS_NAME_LINUX)) {
+            openLinuxNautilus(frameParent, file);
+        } else if (valOsName.startsWith(OS_NAME_MAC)) {
+            openMacOsFinder(frameParent, file);
+        } else {
+            JOptionPane.showMessageDialog(frameParent, "Unsupported OS!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private static void openWindowsExplorer(JFrame frameParent, File file) {
         try {
             // Start an 'explorer' process in Windows
             // https://stackoverflow.com/questions/13680415/how-to-open-explorer-with-a-specific-file-selected
-            
+
             // The following works with files with space characters
             ProcessBuilder pb = new ProcessBuilder("explorer.exe", "/select,", file.toString());
             pb.start();
@@ -96,8 +121,29 @@ public class OpenLinkedFileInExplorer extends ExportHook {
             // Not sure if we need to wait for explorer to return...
             // proc.waitFor();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(getController().getFrame().getJFrame(),
-                    "Failed to open explorer " + e.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(frameParent, "Failed to open explorer " + e.getMessage(), "Error",
+                    JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private static void openLinuxNautilus(JFrame frameParent, File file) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder("nautilus", "-s", file.getAbsolutePath());
+            pb.start();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frameParent, "Failed to open explorer: " + e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private static void openMacOsFinder(JFrame frameParent, File file) {
+        try {
+            // https://stackoverflow.com/questions/40963947/open-a-file-in-default-file-explorer-and-highlight-it-using-javafx-or-plain-java/51017185#51017185
+            ProcessBuilder pb = new ProcessBuilder("open", "-R", file.getAbsolutePath());
+            pb.start();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frameParent, "Failed to open Nautilus: " + e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 

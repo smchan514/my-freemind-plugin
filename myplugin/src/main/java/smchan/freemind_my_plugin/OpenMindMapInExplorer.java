@@ -25,18 +25,7 @@ public class OpenMindMapInExplorer extends ExportHook {
             return;
         }
 
-        try {
-            // Start an 'explorer' process
-            // See http://support.microsoft.com/kb/152457
-            String cmd = "explorer /select," + file;
-            Runtime.getRuntime().exec(cmd);
-
-            // Not sure if we need to wait for explorer to return...
-            // proc.waitFor();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(getController().getFrame().getJFrame(),
-                    "Failed to open explorer " + e.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
-        }
+        OpenLinkedFileInExplorer.openExplorer(getController().getFrame().getJFrame(), file);
     }
 
 }
